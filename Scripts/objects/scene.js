@@ -18,25 +18,44 @@ var objects;
         // Consstructors
         function Scene(width, height, assetManager) {
             var _this = _super.call(this) || this;
-            _this.setBounds(0, 0, width, height);
+            _this.width = width;
+            _this.height = height;
+            /**/ _this.setBounds(0, 0, width, height);
             _this.x = _this.GetCenter().x;
             _this.y = _this.GetCenter().y;
-            _this.regX = _this.GetCenter().x;
-            _this.regY = _this.GetCenter().y;
+            _this.regX = _this.width / 2;
+            _this.regY = _this.height / 2;
             _this.assetManager = assetManager;
+            _this._gameObjects = new Array();
             return _this;
         }
         // Public methods
         Scene.prototype.Start = function () { };
-        Scene.prototype.Update = function () { };
+        Scene.prototype.Update = function () {
+            this._gameObjects.forEach(function (element) {
+                element[1].Update();
+            });
+        };
         Scene.prototype.Main = function () { };
         Scene.prototype.GetSize = function () {
-            var bounds = this.getBounds();
-            return new objects.Vector2(bounds.width, bounds.height);
+            return new objects.Vector2(this.width, this.height);
         };
         Scene.prototype.GetCenter = function () {
-            var bounds = this.getBounds();
-            return new objects.Vector2(bounds.width / 2, bounds.height / 2);
+            return new objects.Vector2(this.width / 2, this.height / 2);
+        };
+        Scene.prototype.addGameObject = function (entity) {
+            this._gameObjects.push([entity.GetId(), entity]);
+        };
+        Scene.prototype.removeGameObject = function (entity) {
+            /*
+            var IndexToRemove = this._gameObjects.indexOf([entity.GetId(), entity]);
+            var LastElem = this._gameObjects[this._gameObjects.length - 1];
+            var ToRemove = this._gameObjects[IndexToRemove];
+
+            var Temp = LastElem;
+            LastElem = ToRemove;
+            ToRemove = Temp;
+            */
         };
         Scene.prototype.Zoom = function (amount, duration, ease) {
             if (duration == null) {

@@ -42,10 +42,10 @@ var scenes;
             // cache the center of the screen position
             var screenCenter = this.GetCenter();
             // Set the properities of the animated Title label
-            this._titleLabel = new objects.Label("Moonrunners", "80px", "Consolas", "#fff", screenCenter.x, screenCenter.y - 50);
-            this._titleLabel.setScale(0.5);
-            this._titleLabel.textAlign = "center";
+            this._titleLabel = new objects.GameObject(this.assetManager, "logo", true);
             this._titleLabel.alpha = 0;
+            this._titleLabel.setScale(0.15);
+            this._titleLabel.setPosition(screenCenter.x, screenCenter.y - 50);
             this.addChild(this._titleLabel);
             // Set the properities of the animated Title label
             this._continueLabel = new objects.Label("Click anywhere to continue", "20px", "Consolas", "#fff", screenCenter.x, screenCenter.y + 50);
@@ -58,7 +58,7 @@ var scenes;
         };
         StartScene.prototype.Main = function () {
             console.log("Main() in StartScene");
-            createjs.Tween.get(this._titleLabel).to({ alpha: 1, scaleX: 1, scaleY: 1 }, 2000, createjs.Ease.getPowOut(1)).call(this.showClickToContinueLabel, null, this);
+            createjs.Tween.get(this._titleLabel).to({ alpha: 1, scaleX: 0.25, scaleY: 0.25 }, 2000, createjs.Ease.getPowOut(1)).call(this.showClickToContinueLabel, null, this);
         };
         return StartScene;
     }(objects.Scene));

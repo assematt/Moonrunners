@@ -1,7 +1,7 @@
 module objects {
     export class Vector2 {
 
-        // Consstructors
+        // Constructors
         constructor(x: number, y: number)
         {
             this.x = x;

@@ -1,7 +1,7 @@
 var objects;
 (function (objects) {
     var Vector2 = /** @class */ (function () {
-        // Consstructors
+        // Constructors
         function Vector2(x, y) {
             this.x = x;
             this.y = y;

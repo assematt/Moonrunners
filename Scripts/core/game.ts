@@ -17,8 +17,13 @@
 
     // Load assets
     assetManifest = [
+        {id: "logo", src:"./Assets/images/logo.png"},
         {id: "background", src:"./Assets/images/bg.jpg"},
-        {id: "level", src:"./Assets/images/level.png"}
+        {id: "background_2", src:"./Assets/images/bg_2.jpg"},
+        {id: "level", src:"./Assets/images/level.png"},
+        {id: "figure", src:"./Assets/images/figure.png"},
+        {id: "player1", src:"./Assets/images/player1.png"},
+        {id: "player2", src:"./Assets/images/player2.png"}
     ]
 
     // Preload the required assets
@@ -46,7 +51,7 @@
         createjs.Ticker.on("tick", Update);
 
         // Set the stage size
-        stage.setBounds(0, 0, displayWidth, displayHeight);
+        //stage.setBounds(0, 0, displayWidth, displayHeight);
         
         objects.Game.currentScene = config.Scene.START;
         currentState = config.Scene.START;

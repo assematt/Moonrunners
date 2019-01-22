@@ -1,7 +1,7 @@
 module scenes {
     export class StartScene extends objects.Scene {
         // Instance variables
-        private _titleLabel : objects.Label;
+        private _titleLabel : objects.GameObject;
         private _continueLabel : objects.Label;
         private _gameBackground : createjs.Bitmap;
 
@@ -38,10 +38,10 @@ module scenes {
             let screenCenter = this.GetCenter();
 
             // Set the properities of the animated Title label
-            this._titleLabel = new objects.Label("Moonrunners", "80px", "Consolas", "#fff", screenCenter.x, screenCenter.y - 50);
-            this._titleLabel.setScale(0.5);
-            this._titleLabel.textAlign = "center";
+            this._titleLabel = new objects.GameObject(this.assetManager, "logo", true);
             this._titleLabel.alpha = 0;
+            this._titleLabel.setScale(0.15);
+            this._titleLabel.setPosition(screenCenter.x, screenCenter.y - 50);
             this.addChild(this._titleLabel);
             
             // Set the properities of the animated Title label
@@ -58,7 +58,7 @@ module scenes {
 
         public Main() : void {
             console.log("Main() in StartScene");
-            createjs.Tween.get(this._titleLabel).to({alpha:1, scaleX: 1, scaleY: 1}, 2000, createjs.Ease.getPowOut(1)).call(this.showClickToContinueLabel, null, this);
+            createjs.Tween.get(this._titleLabel).to({alpha:1, scaleX: 0.25, scaleY: 0.25}, 2000, createjs.Ease.getPowOut(1)).call(this.showClickToContinueLabel, null, this);
         }
     }
 }
