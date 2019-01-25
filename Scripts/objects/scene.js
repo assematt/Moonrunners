@@ -29,11 +29,47 @@ var objects;
             _this._gameObjects = new Array();
             return _this;
         }
+        // Private methods
+        Scene.prototype._DetectCollisions = function () {
+            // Get the entites that can collide
+            var Colliding = this._gameObjects.filter(function (filter) {
+                return filter[1].hasCollisions;
+            });
+            var CheckCollisions = function (Elem1, Elem2) {
+                Elem1.setBounds(Elem1.x, Elem1.y, Elem1.width, Elem1.height);
+                Elem2.setBounds(Elem2.x, Elem2.y, Elem2.width, Elem2.height);
+                if (Elem1.getBounds().intersects(Elem2.getBounds())) {
+                    Elem1.IsColliding(true);
+                    Elem2.IsColliding(true);
+                    Elem1._wasEvaluated = true;
+                    Elem2._wasEvaluated = true;
+                }
+                return Elem1.getBounds().intersects(Elem2.getBounds());
+            };
+            // Reset collisions
+            Colliding.forEach(function (element) {
+                element[1]._wasEvaluated = false;
+                element[1].IsColliding(false);
+            });
+            // Check for collisions
+            Colliding.forEach(function (element) {
+                var Elem1 = element[1];
+                Colliding.forEach(function (other) {
+                    var Elem2 = other[1];
+                    if (element[0] != other[0] && !element[1]._wasEvaluated) {
+                        CheckCollisions(Elem1, Elem2);
+                    }
+                });
+            });
+        };
         // Public methods
         Scene.prototype.Start = function () { };
         Scene.prototype.Update = function () {
-            this._gameObjects.forEach(function (element) {
-                element[1].Update();
+            // Does collisions
+            this._DetectCollisions();
+            // Update every single entity
+            this._gameObjects.forEach(function (gameObject) {
+                gameObject[1].Update();
             });
         };
         Scene.prototype.Main = function () { };

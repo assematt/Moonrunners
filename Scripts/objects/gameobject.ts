@@ -10,13 +10,16 @@ module objects {
         protected _dX: number;
         protected _dY: number;
         protected _isCentered: boolean;
+        protected _isColliding: boolean; 
+        
 
         // Public properties
         public width: number;
         public height: number;
         public halfWidth: number;
         public halfHeight: number;
-        public gravity: number;
+        public hasCollisions: boolean;
+        public _wasEvaluated: boolean;
 
         // Constructor
         constructor(assetManager: createjs.LoadQueue, assetID: string, isCentered?: boolean)
@@ -24,6 +27,8 @@ module objects {
             super(assetManager.getResult(assetID));
             this.name = assetID;
             this._isCentered = isCentered;
+            this._isColliding = false;
+            this.hasCollisions = false;
             this._initialize();
 
             this._Id = ++GameObject._IdCounter;
@@ -31,7 +36,7 @@ module objects {
 
         // Private Methods
         private _initialize() : void {
-            this.gravity = 9.81;
+            
             this._updateBounds();
             if (this._isCentered == true)
             {
@@ -70,28 +75,23 @@ module objects {
 
         public Update() : void {
 
-            //this.y += this.gravity * 1;
+            
         }
 
         public Reset() : void {
             
         }
 
-        public IsColliding(other: GameObject) : boolean {
+        public IsColliding(value?: boolean) : boolean {
             // Get the bound of the other object
-            var otherBound = other.getBounds();
+            if (value != null)            
+                this._isColliding = value;
 
-            // Get the bounds of this object
-            var thisBound = this.getBounds();            
-
-            return thisBound.intersects(otherBound);;
+            return this._isColliding;
         }
 
+        
         public CheckBound() : void {
-            
-        }
-
-        public Move() : void {
             
         }
     }

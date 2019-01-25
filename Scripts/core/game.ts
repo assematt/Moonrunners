@@ -21,7 +21,7 @@
         {id: "background", src:"./Assets/images/bg.jpg"},
         {id: "background_2", src:"./Assets/images/bg_2.jpg"},
         {id: "level", src:"./Assets/images/level.png"},
-        {id: "figure", src:"./Assets/images/figure.png"},
+        {id: "floor", src:"./Assets/images/floor.png"},
         {id: "player1", src:"./Assets/images/player1.png"},
         {id: "player2", src:"./Assets/images/player2.png"}
     ]
@@ -89,6 +89,17 @@
         stage.addChild(currentScene);
     }    
 
+    function SetEvent(ev: KeyboardEvent)
+    {
+        objects.Game.EventManager = ev;
+    }
+    function ResetEvent()
+    {
+        objects.Game.EventManager = null;
+    }
+
     window.onload = Init;
+    window.onkeydown = SetEvent;
+    window.onkeyup = ResetEvent;
 
 })();

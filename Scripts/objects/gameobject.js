@@ -20,13 +20,14 @@ var objects;
             var _this = _super.call(this, assetManager.getResult(assetID)) || this;
             _this.name = assetID;
             _this._isCentered = isCentered;
+            _this._isColliding = false;
+            _this.hasCollisions = false;
             _this._initialize();
             _this._Id = ++GameObject._IdCounter;
             return _this;
         }
         // Private Methods
         GameObject.prototype._initialize = function () {
-            this.gravity = 9.81;
             this._updateBounds();
             if (this._isCentered == true) {
                 this.regX = this.halfWidth;
@@ -58,21 +59,16 @@ var objects;
         GameObject.prototype.Start = function () {
         };
         GameObject.prototype.Update = function () {
-            //this.y += this.gravity * 1;
         };
         GameObject.prototype.Reset = function () {
         };
-        GameObject.prototype.IsColliding = function (other) {
+        GameObject.prototype.IsColliding = function (value) {
             // Get the bound of the other object
-            var otherBound = other.getBounds();
-            // Get the bounds of this object
-            var thisBound = this.getBounds();
-            return thisBound.intersects(otherBound);
-            ;
+            if (value != null)
+                this._isColliding = value;
+            return this._isColliding;
         };
         GameObject.prototype.CheckBound = function () {
-        };
-        GameObject.prototype.Move = function () {
         };
         GameObject._IdCounter = 0;
         return GameObject;

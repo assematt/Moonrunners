@@ -27,12 +27,58 @@ module objects {
             this._gameObjects = new Array<[number, GameObject]>();
         }
 
+        // Private methods
+        private _DetectCollisions() {
+            // Get the entites that can collide
+            var Colliding = this._gameObjects.filter(filter => {               
+                return filter[1].hasCollisions;
+            });
+
+            var CheckCollisions = function(Elem1: GameObject, Elem2: GameObject) : boolean {
+                Elem1.setBounds(Elem1.x, Elem1.y, Elem1.width, Elem1.height);
+                Elem2.setBounds(Elem2.x, Elem2.y, Elem2.width, Elem2.height);
+                
+                if (Elem1.getBounds().intersects(Elem2.getBounds()))
+                {
+                    Elem1.IsColliding(true);
+                    Elem2.IsColliding(true);
+                    Elem1._wasEvaluated = true;
+                    Elem2._wasEvaluated = true;
+                }
+                return Elem1.getBounds().intersects(Elem2.getBounds());
+            };
+
+            // Reset collisions
+            Colliding.forEach(element => {
+                element[1]._wasEvaluated = false;
+                element[1].IsColliding(false);
+            });
+
+            // Check for collisions
+            Colliding.forEach(element => {
+                var Elem1 = element[1];
+
+                Colliding.forEach(other => {
+                    var Elem2 = other[1];
+
+                    if (element[0] != other[0] && !element[1]._wasEvaluated)
+                    {
+                        CheckCollisions(Elem1, Elem2);
+                    }
+                })
+            });
+        }
+
         // Public methods
         public Start() : void {}
         public Update() : void
         {
-            this._gameObjects.forEach(element => {
-                element[1].Update();
+            // Does collisions
+            this._DetectCollisions();
+            
+            // Update every single entity
+            this._gameObjects.forEach(gameObject => {
+                gameObject[1].Update();
             });
         }
         public Main() : void {}
