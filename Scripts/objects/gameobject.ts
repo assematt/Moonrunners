@@ -1,4 +1,7 @@
 module objects {
+
+    type CollisionEvent = (other: GameObject) => void;
+
     export class GameObject extends createjs.Bitmap {
     
 
@@ -10,7 +13,6 @@ module objects {
         protected _dX: number;
         protected _dY: number;
         protected _isCentered: boolean;
-        protected _isColliding: boolean; 
         
 
         // Public properties
@@ -19,16 +21,18 @@ module objects {
         public halfWidth: number;
         public halfHeight: number;
         public hasCollisions: boolean;
-        public _wasEvaluated: boolean;
+        public onCollision: CollisionEvent;
+        public tag: string;
 
         // Constructor
-        constructor(assetManager: createjs.LoadQueue, assetID: string, isCentered?: boolean)
+        constructor(assetID: string, isCentered?: boolean)
         {
-            super(assetManager.getResult(assetID));
+            super(objects.Game.assetManager.getResult(assetID));
             this.name = assetID;
             this._isCentered = isCentered;
-            this._isColliding = false;
-            this.hasCollisions = false;
+            this.hasCollisions = false; 
+            this.tag = "GameObject";
+            this.onCollision = this.OnCollision;
             this._initialize();
 
             this._Id = ++GameObject._IdCounter;
@@ -81,18 +85,11 @@ module objects {
         public Reset() : void {
             
         }
-
-        public IsColliding(value?: boolean) : boolean {
-            // Get the bound of the other object
-            if (value != null)            
-                this._isColliding = value;
-
-            return this._isColliding;
-        }
-
         
         public CheckBound() : void {
             
         }
+
+        public OnCollision(other: GameObject) {}
     }
 }

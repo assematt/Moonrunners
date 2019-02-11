@@ -4,15 +4,14 @@
     let canvas = document.getElementById("canvas");
     let stage:createjs.Stage;
 
-    // Asset manager
-    let assetManager : createjs.LoadQueue;
+    // Asset manifest
     let assetManifest: any[];
 
     // Display properties
     let displayWidth = 1920;
     let displayHeight = 1080;
 
-    let currentScene: objects.Scene;
+    //let currentScene: objects.Scene;
     let currentState: number;
 
     // Load assets
@@ -23,26 +22,26 @@
         {id: "level", src:"./Assets/images/level.png"},
         {id: "floor", src:"./Assets/images/floor.png"},
         {id: "player1", src:"./Assets/images/player1.png"},
-        {id: "player2", src:"./Assets/images/player2.png"}
+        {id: "player2", src:"./Assets/images/player2.png"},
+        {id: "bullet", src:"./Assets/images/bullet.png"},
+        {id: "health", src:"./Assets/images/health.png"}
     ]
 
     // Preload the required assets
     function Init() : void {
-        // Debug message
-        console.log("Initialization started");
 
         // Create the asset manager and preload stuff
-        assetManager = new createjs.LoadQueue();
+        let assetManager = new createjs.LoadQueue();
         assetManager.installPlugin(createjs.Sound);
         assetManager.loadManifest(assetManifest);
         assetManager.on("complete", Start);
+
+        // Set the static properties
+        objects.Game.assetManager = assetManager;
     }
 
     // Setup the game objects
     function Start() : void {
-        // Debug message
-        console.log("Starting application...");
-
         // Create the main stage
         stage = new createjs.Stage(canvas);
 
@@ -53,18 +52,19 @@
         // Set the stage size
         //stage.setBounds(0, 0, displayWidth, displayHeight);
         
-        objects.Game.currentScene = config.Scene.START;
+        objects.Game.currentSceneNumber = config.Scene.START;
+        objects.Game.currentScene = new scenes.StartScene(displayWidth, displayHeight); 
         currentState = config.Scene.START;
 
         Main();
     }
     function Update() : void {
         // Check if we 
-        if (currentState != objects.Game.currentScene) {
+        if (currentState != objects.Game.currentSceneNumber) {
             Main();
-            currentState = objects.Game.currentScene;
+            currentState = objects.Game.currentSceneNumber;
         }
-        currentScene.Update();
+        objects.Game.currentScene.Update();
         stage.update();
     }
     function Main() : void {
@@ -72,21 +72,21 @@
         // Reset the scene
         stage.removeAllChildren();
 
-        switch (objects.Game.currentScene) {
+        switch (objects.Game.currentSceneNumber) {
             // When we load the start scene
             case config.Scene.START:            
-                currentScene = new scenes.StartScene(displayWidth, displayHeight, assetManager);            
+            objects.Game.currentScene = new scenes.StartScene(displayWidth, displayHeight);            
             break;
             case config.Scene.PLAY:
-                currentScene = new scenes.PlayScene(displayWidth, displayHeight, assetManager);
+            objects.Game.currentScene = new scenes.PlayScene(displayWidth, displayHeight);
             break;
             case config.Scene.OVER:
-                currentScene = new scenes.OverScene(displayWidth, displayHeight, assetManager);
+            objects.Game.currentScene = new scenes.OverScene(displayWidth, displayHeight);
             break;
         }
 
         // Add elements to the scene
-        stage.addChild(currentScene);
+        stage.addChild(objects.Game.currentScene);
     }    
 
     function SetEvent(ev: KeyboardEvent)

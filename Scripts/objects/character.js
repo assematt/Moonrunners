@@ -1,56 +1,103 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var objects;
 (function (objects) {
-    var Characters = /** @class */ (function (_super) {
-        __extends(Characters, _super);
+    class Characters extends objects.GameObject {
         // Constructor
-        function Characters(assetManager, assetID, isCentered) {
-            var _this = _super.call(this, assetManager, assetID, isCentered) || this;
-            _this._gravity = 0;
-            _this._jumpForce = 0;
-            _this._isJumping = false;
-            return _this;
+        constructor(assetID, isCentered) {
+            super(assetID, isCentered);
+            this._gravity = 0;
+            this._jumpForce = 0;
+            this._isJumping = false;
+            this._isFalling = true;
+            this._playerHealth = 6;
+            this.tag = "Player";
+            this.onCollision = this.onCharacterCollision;
+        }
+        _RegisterHit() {
+            let health = this._playerHealth;
+            let currentSprite;
+            switch (true) {
+                case health > 3:
+                    currentSprite = this._healthSprites[2];
+                    break;
+                case health > 1:
+                    currentSprite = this._healthSprites[1];
+                    break;
+                case health >= 0:
+                    currentSprite = this._healthSprites[0];
+                    break;
+            }
+            let currentFrame = currentSprite.currentFrame;
+            currentSprite.gotoAndStop(currentFrame + 1);
+        }
+        SetHealhtSprite(sprites) {
+            this._healthSprites = sprites;
         }
         // Public methods
-        Characters.prototype.setGravity = function (gravity) {
+        setGravity(gravity) {
             this._gravity = gravity;
-        };
-        Characters.prototype.GetGravity = function () {
+        }
+        GetGravity() {
             return this._gravity;
-        };
-        Characters.prototype.Move = function (direction) {
+        }
+        Shoot() {
+            let Bullet = new objects.Bullet("bullet", this.GetId(), this.scaleX < 0 ? "left" : "right");
+            Bullet.x = this.x + (this.scaleX < 0 ? -35 : 33);
+            Bullet.y = this.y + 24;
+            Bullet.name = `bullet_${Bullet.GetId()}`;
+            Bullet.hasCollisions = true;
+            return Bullet;
+        }
+        Move(direction) {
             switch (direction) {
                 case "left":
                     this.x -= 2;
+                    if (this.scaleX > 0) {
+                        this.scaleX = -this.scaleX;
+                    }
                     break;
                 case "right":
                     this.x += 2;
+                    if (this.scaleX < 0) {
+                        this.scaleX = -this.scaleX;
+                    }
                     break;
             }
-        };
-        Characters.prototype.Jump = function () {
+        }
+        Jump() {
             this._jumpForce = -4;
             this.y -= 20;
-        };
-        Characters.prototype.Update = function () {
-            _super.prototype.Update.call(this);
-            if (!this._isColliding)
+            this._isFalling = true;
+        }
+        Update() {
+            super.Update();
+            if (this._isFalling)
                 this.y += (this._gravity * 1) + this._jumpForce;
-        };
-        return Characters;
-    }(objects.GameObject));
+        }
+        onCharacterCollision(other) {
+            switch (other.tag) {
+                case "Floor":
+                    this._isFalling = false;
+                    break;
+                case "Bullet":
+                    {
+                        if (other.getOwner() != this.id && this._playerHealth > 0) {
+                            console.log(`${this.name} || ${other.name}`);
+                            // Remove the buller from the scene
+                            other.hasCollisions = false;
+                            objects.Game.currentScene.removeGameObject(other);
+                            // decrease the player health
+                            if (--this._playerHealth <= 0)
+                                console.log(`${this.name} is dead`);
+                            this._RegisterHit();
+                            console.log(`${this.name} health is ${this._playerHealth}`);
+                        }
+                    }
+                    break;
+            }
+            if (other.name === "floor")
+                this._isFalling = false;
+        }
+    }
     objects.Characters = Characters;
 })(objects || (objects = {}));
 //# sourceMappingURL=character.js.map

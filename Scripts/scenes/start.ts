@@ -3,13 +3,13 @@ module scenes {
         // Instance variables
         private _titleLabel : objects.GameObject;
         private _continueLabel : objects.Label;
-        private _gameBackground : createjs.Bitmap;
+        private _gameBackground : objects.GameObject;
 
         // Public properties
 
         // Constructor
-        constructor(width: number, height: number, assetManager: createjs.LoadQueue) {
-            super(width, height, assetManager);
+        constructor(width: number, height: number) {
+            super(width, height);
 
             this.Start();
         }
@@ -22,7 +22,7 @@ module scenes {
         private startGame() : void {
             this._gameBackground.off("click", this.startGame);
             createjs.Tween.get(this._titleLabel).to({alpha:0}, 500, createjs.Ease.getPowOut(1)).call(function() {
-                objects.Game.currentScene = config.Scene.PLAY;
+                objects.Game.currentSceneNumber = config.Scene.PLAY;
             });
             createjs.Tween.get(this._continueLabel).to({alpha:0}, 500, createjs.Ease.getPowOut(1));
             
@@ -31,18 +31,18 @@ module scenes {
         // Public Methods
         public Start() : void {
             // Set the properities of the background Title label
-            this._gameBackground = new createjs.Bitmap(this.assetManager.getResult("background"));
-            this.addChild(this._gameBackground);
+            this._gameBackground = new objects.GameObject("background");
+            this.addGameObject(this._gameBackground);
 
             // cache the center of the screen position
             let screenCenter = this.GetCenter();
 
             // Set the properities of the animated Title label
-            this._titleLabel = new objects.GameObject(this.assetManager, "logo", true);
+            this._titleLabel = new objects.GameObject("logo", true);
             this._titleLabel.alpha = 0;
             this._titleLabel.setScale(0.15);
             this._titleLabel.setPosition(screenCenter.x, screenCenter.y - 50);
-            this.addChild(this._titleLabel);
+            this.addGameObject(this._titleLabel);
             
             // Set the properities of the animated Title label
             this._continueLabel = new objects.Label("Click anywhere to continue", "20px", "Consolas", "#fff", screenCenter.x, screenCenter.y + 50);
@@ -57,7 +57,6 @@ module scenes {
         }
 
         public Main() : void {
-            console.log("Main() in StartScene");
             createjs.Tween.get(this._titleLabel).to({alpha:1, scaleX: 0.25, scaleY: 0.25}, 2000, createjs.Ease.getPowOut(1)).call(this.showClickToContinueLabel, null, this);
         }
     }

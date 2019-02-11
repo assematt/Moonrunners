@@ -8,8 +8,8 @@ module scenes {
         // Public properties
 
         // Constructor
-        constructor(width: number, height: number, assetManager: createjs.LoadQueue) {
-            super(width, height, assetManager);
+        constructor(width: number, height: number) {
+            super(width, height);
 
             this.Start();
         }
@@ -23,7 +23,7 @@ module scenes {
             this._gameBackground.off("click", this.startGame);
             createjs.Tween.get(this._titleLabel).to({y:50}, 1500, createjs.Ease.getPowOut(1));
             createjs.Tween.get(this._continueLabel).to({alpha:0}, 500, createjs.Ease.getPowOut(1));
-            objects.Game.currentScene = config.Scene.PLAY;
+            objects.Game.currentSceneNumber = config.Scene.PLAY;
         }
 
         // Public Methods

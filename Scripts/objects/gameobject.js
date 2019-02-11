@@ -1,78 +1,58 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var objects;
 (function (objects) {
-    var GameObject = /** @class */ (function (_super) {
-        __extends(GameObject, _super);
+    class GameObject extends createjs.Bitmap {
         // Constructor
-        function GameObject(assetManager, assetID, isCentered) {
-            var _this = _super.call(this, assetManager.getResult(assetID)) || this;
-            _this.name = assetID;
-            _this._isCentered = isCentered;
-            _this._isColliding = false;
-            _this.hasCollisions = false;
-            _this._initialize();
-            _this._Id = ++GameObject._IdCounter;
-            return _this;
+        constructor(assetID, isCentered) {
+            super(objects.Game.assetManager.getResult(assetID));
+            this.name = assetID;
+            this._isCentered = isCentered;
+            this.hasCollisions = false;
+            this.tag = "GameObject";
+            this.onCollision = this.OnCollision;
+            this._initialize();
+            this._Id = ++GameObject._IdCounter;
         }
         // Private Methods
-        GameObject.prototype._initialize = function () {
+        _initialize() {
             this._updateBounds();
             if (this._isCentered == true) {
                 this.regX = this.halfWidth;
                 this.regY = this.halfHeight;
             }
-        };
-        GameObject.prototype._updateBounds = function () {
+        }
+        _updateBounds() {
             this.width = this.getBounds().width * this.scaleX;
             this.height = this.getBounds().height * this.scaleY;
             this.halfWidth = this.width * 0.5;
             this.halfHeight = this.height * 0.5;
-        };
+        }
         // Public Methods
-        GameObject.prototype.GetId = function () {
+        GetId() {
             return this._Id;
-        };
-        GameObject.prototype.Fade = function (opacity, duration, fade, callback, scope) {
+        }
+        Fade(opacity, duration, fade, callback, scope) {
             return createjs.Tween.get(this).to({ alpha: opacity }, duration, fade).call(callback ? callback : function () { }, null, scope);
-        };
-        GameObject.prototype.setPosition = function (x, y) {
+        }
+        setPosition(x, y) {
             this.x = x;
             this.y = y;
-        };
-        GameObject.prototype.setScale = function (Scale) {
+        }
+        setScale(Scale) {
             this.scaleX = Scale;
             this.scaleY = Scale;
             this._updateBounds();
-        };
-        GameObject.prototype.Start = function () {
-        };
-        GameObject.prototype.Update = function () {
-        };
-        GameObject.prototype.Reset = function () {
-        };
-        GameObject.prototype.IsColliding = function (value) {
-            // Get the bound of the other object
-            if (value != null)
-                this._isColliding = value;
-            return this._isColliding;
-        };
-        GameObject.prototype.CheckBound = function () {
-        };
-        GameObject._IdCounter = 0;
-        return GameObject;
-    }(createjs.Bitmap));
+        }
+        Start() {
+        }
+        Update() {
+        }
+        Reset() {
+        }
+        CheckBound() {
+        }
+        OnCollision(other) { }
+    }
+    GameObject._IdCounter = 0;
     objects.GameObject = GameObject;
 })(objects || (objects = {}));
 //# sourceMappingURL=gameobject.js.map

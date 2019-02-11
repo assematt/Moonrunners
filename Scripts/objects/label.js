@@ -1,37 +1,18 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var objects;
 (function (objects) {
-    var Label = /** @class */ (function (_super) {
-        __extends(Label, _super);
-        function Label(caption, fontSize, fontFamily, fontColour, x, y) {
-            if (x === void 0) { x = 0; }
-            if (y === void 0) { y = 0; }
-            var _this = 
+    class Label extends createjs.Text {
+        constructor(caption, fontSize, fontFamily, fontColour, x = 0, y = 0) {
             // Call the super constructor
-            _super.call(this, caption, fontSize + " " + fontFamily, fontColour) || this;
+            super(caption, fontSize + " " + fontFamily, fontColour);
             // Set the position
-            _this.x = x;
-            _this.y = y;
-            return _this;
+            this.x = x;
+            this.y = y;
         }
-        Label.prototype.setScale = function (Scale) {
+        setScale(Scale) {
             this.scaleX = Scale;
             this.scaleY = Scale;
-        };
-        return Label;
-    }(createjs.Text));
+        }
+    }
     objects.Label = Label;
 })(objects || (objects = {}));
 //# sourceMappingURL=label.js.map

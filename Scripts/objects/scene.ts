@@ -1,9 +1,9 @@
-module objects {
+module objects {   
+
     export class Scene extends createjs.Container {
 
         // protected properties
         protected _gameObjects: Array<[number, GameObject]>;
-
 
         // Public properties
         public assetManager;
@@ -11,7 +11,7 @@ module objects {
         public height: number;
 
         // Consstructors
-        constructor(width: number, height: number, assetManager: createjs.LoadQueue) {
+        constructor(width: number, height: number) {
             super();
 
             this.width = width;
@@ -22,7 +22,7 @@ module objects {
             this.y = this.GetCenter().y;
             this.regX = this.width / 2;
             this.regY = this.height / 2;
-            this.assetManager = assetManager;
+            this.assetManager = objects.Game.assetManager;
 
             this._gameObjects = new Array<[number, GameObject]>();
         }
@@ -30,56 +30,82 @@ module objects {
         // Private methods
         private _DetectCollisions() {
             // Get the entites that can collide
-            var Colliding = this._gameObjects.filter(filter => {               
-                return filter[1].hasCollisions;
-            });
+            let Colliding = this._gameObjects.filter(filter => filter[1].hasCollisions);
 
-            var CheckCollisions = function(Elem1: GameObject, Elem2: GameObject) : boolean {
+            let CheckCollisions = function(Elem1: GameObject, Elem2: GameObject) : boolean {
                 Elem1.setBounds(Elem1.x, Elem1.y, Elem1.width, Elem1.height);
                 Elem2.setBounds(Elem2.x, Elem2.y, Elem2.width, Elem2.height);
+
+                let collision = Elem1.getBounds().intersects(Elem2.getBounds());
                 
-                if (Elem1.getBounds().intersects(Elem2.getBounds()))
+                if (collision)
                 {
-                    Elem1.IsColliding(true);
-                    Elem2.IsColliding(true);
-                    Elem1._wasEvaluated = true;
-                    Elem2._wasEvaluated = true;
+                    //Elem1.onCollision(Elem2);
                 }
-                return Elem1.getBounds().intersects(Elem2.getBounds());
+
+                return collision;
             };
 
-            // Reset collisions
-            Colliding.forEach(element => {
-                element[1]._wasEvaluated = false;
-                element[1].IsColliding(false);
-            });
+            let size = this._gameObjects.length;
+            for (let LI = 0; LI < size; ++LI)
+            {
+                let Elem1 = this._gameObjects[LI][1];
+                if (Elem1.hasCollisions)
+                {
+                    for (let RI = 0; RI < size; ++RI)
+                    {
+                        let Elem2 = this._gameObjects[RI][1];
+
+                        if (Elem1 != Elem2 && Elem2.hasCollisions && CheckCollisions(Elem1, Elem2))
+                        {
+                            if ((Elem1.tag === "Bullet" && Elem2.tag === "Player") || (Elem2.tag === "Bullet" && Elem1.tag === "Player"))
+                            {
+                                let stop = true;
+                            }
+
+                            Elem1.onCollision(Elem2);
+
+                            if (!Elem1.parent)
+                                break;
+                        }
+                    }
+                }
+            }
 
             // Check for collisions
+            /*
             Colliding.forEach(element => {
-                var Elem1 = element[1];
+                let Elem1 = element[1];
 
-                Colliding.forEach(other => {
-                    var Elem2 = other[1];
+                Colliding.forEach(async other => {
+                    let Elem2 = other[1];
 
-                    if (element[0] != other[0] && !element[1]._wasEvaluated)
+                    if (Elem1.GetId() != Elem2.GetId())
                     {
+                        if (Elem1.tag === "Bullet" && Elem2.tag === "Player")
+                        {
+                            let breakpoint = true;
+                        }
                         CheckCollisions(Elem1, Elem2);
                     }
                 })
             });
+            */
         }
 
         // Public methods
         public Start() : void {}
         public Update() : void
         {
-            // Does collisions
-            this._DetectCollisions();
-            
             // Update every single entity
             this._gameObjects.forEach(gameObject => {
                 gameObject[1].Update();
             });
+
+            // Does collisions
+            this._DetectCollisions();
+            
+            
         }
         public Main() : void {}
         public GetSize() : objects.Vector2 {
@@ -90,9 +116,14 @@ module objects {
         }
 
         public addGameObject(entity: GameObject) {
+            this.addChild(entity);
             this._gameObjects.push([entity.GetId(), entity]);
         }
         public removeGameObject(entity: GameObject) {
+
+            this.removeChild(entity);
+            this._gameObjects = this._gameObjects.filter(value => value[0] != entity.id);
+
             /*
             var IndexToRemove = this._gameObjects.indexOf([entity.GetId(), entity]);
             var LastElem = this._gameObjects[this._gameObjects.length - 1];

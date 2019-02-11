@@ -1,6 +1,6 @@
 var config;
 (function (config) {
-    var Scene;
+    let Scene;
     (function (Scene) {
         Scene[Scene["START"] = 0] = "START";
         Scene[Scene["PLAY"] = 1] = "PLAY";
