@@ -13,7 +13,6 @@ module objects {
         protected _dX: number;
         protected _dY: number;
         protected _isCentered: boolean;
-        
 
         // Public properties
         public width: number;
@@ -23,6 +22,7 @@ module objects {
         public hasCollisions: boolean;
         public onCollision: CollisionEvent;
         public tag: string;
+        public isActive = false;
 
         // Constructor
         constructor(assetID: string, isCentered?: boolean)
@@ -78,16 +78,15 @@ module objects {
         }
 
         public Update() : void {
-
-            
+            // if the object leave the screen destroys it
+            if (this.x < 0 || this.x > Game.currentScene.width || this.y < 0 || this.y > Game.currentScene.height)
+            {
+                this.Destroy();   
+            }
         }
 
-        public Reset() : void {
-            
-        }
-        
-        public CheckBound() : void {
-            
+        public Destroy() : void {
+            objects.Game.currentScene.removeGameObject(this);
         }
 
         public OnCollision(other: GameObject) {}

@@ -5,6 +5,7 @@ var scenes;
         // Constructor
         constructor(width, height) {
             super(width, height);
+            this._scores = [0, 0];
             this.Start();
         }
         // Public Methods
@@ -31,24 +32,25 @@ var scenes;
             this._playerTwo.x = this.width / 2 + 50;
             this._playerTwo.y = this.height / 2;
             this._playerTwo.alpha = 0;
-            // Player 1 health
             this._playersHealth = new createjs.SpriteSheet({
                 images: [objects.Game.assetManager.getResult("health")],
-                frames: { width: 80, height: 80, count: 6, regX: 40, regY: 40, spacing: 0, margin: 0 }
+                frames: { width: 80, height: 80, count: 6, regX: 40, regY: 40, spacing: 0, margin: 0 },
+                animations: { player1: [0, 2], player2: [3, 5] }
             });
-            this._playerOneHealth = new Array(new createjs.Sprite(this._playersHealth), new createjs.Sprite(this._playersHealth), new createjs.Sprite(this._playersHealth));
+            // Player 1 health
+            this._playerOneHealth = new Array(new createjs.Sprite(this._playersHealth, "player1"), new createjs.Sprite(this._playersHealth, "player1"), new createjs.Sprite(this._playersHealth, "player1"));
             this._playerOneHealth.forEach((sprite, index) => {
-                sprite.gotoAndStop(0);
+                sprite.stop();
                 sprite.x = 200 + (40 * index);
                 sprite.y = 200;
                 sprite.scaleX = 0.5;
                 sprite.scaleY = 0.5;
             });
             this._playerOne.SetHealhtSprite(this._playerOneHealth);
-            this._playerTwoHealth = new Array(new createjs.Sprite(this._playersHealth), new createjs.Sprite(this._playersHealth), new createjs.Sprite(this._playersHealth));
-            ;
+            // Player 2 health
+            this._playerTwoHealth = new Array(new createjs.Sprite(this._playersHealth, "player2"), new createjs.Sprite(this._playersHealth, "player2"), new createjs.Sprite(this._playersHealth, "player2"));
             this._playerTwoHealth.forEach((sprite, index) => {
-                sprite.gotoAndStop(3);
+                sprite.stop();
                 sprite.x = this.GetSize().x - 200 - (40 * index);
                 sprite.y = 200;
                 sprite.scaleX = 0.5;
@@ -62,12 +64,21 @@ var scenes;
             this.addGameObject(this._floor);
             this.addGameObject(this._playerOne);
             this.addGameObject(this._playerTwo);
+            // Deactivate the players
+            this._playerOne.isActive = false;
+            this._playerTwo.isActive = false;
+            // Add the sprites
             this._playerOneHealth.forEach(sprite => this.addChild(sprite));
             this._playerTwoHealth.forEach(sprite => this.addChild(sprite));
+            // The score label
+            this._playerOneScore = new objects.Label("0", "50px", "Consolas", "#fff", 178, 125);
+            this.addChild(this._playerOneScore);
+            this._playerTwoScore = new objects.Label("0", "50px", "Consolas", "#fff", this.GetSize().x - 206, 125);
+            this.addChild(this._playerTwoScore);
             this.Main();
         }
         HandleEvents() {
-            if (!objects.Game.EventManager)
+            if (!objects.Game.EventManager || !this._playerOne.isActive || !this._playerTwo.isActive)
                 return;
             switch (objects.Game.EventManager.key) {
                 // Player 1 keys
@@ -98,17 +109,32 @@ var scenes;
                     break;
             }
         }
+        ResetPLayers() {
+            this._playerOne.Reset(this.width / 2 - 50, this.height / 2);
+            this._playerTwo.Reset(this.width / 2 + 50, this.height / 2);
+        }
+        OnPlayerDeath(who) {
+            if (who == "player1") {
+                this._playerTwoScore.text = (++this._scores[1]).toString();
+            }
+            else if (who == "player2") {
+                this._playerOneScore.text = (++this._scores[0]).toString();
+            }
+            this.ResetPLayers();
+        }
         Update() {
-            super.Update();
             this.HandleEvents();
+            super.Update();
         }
         Main() {
             this.Zoom(1.15, 1500);
             this._level.Fade(1, 1500, createjs.Ease.getPowOut(1), function () {
+                // Set players gravity
                 this._playerOne.setGravity(9.81);
                 this._playerTwo.setGravity(9.81);
-                this._playerOne.hasCollisions = true;
-                this._playerTwo.hasCollisions = true;
+                // Reactivate the players
+                this._playerOne.isActive = true;
+                this._playerTwo.isActive = true;
             }, this);
             this._gameBackground2.Fade(1, 1500, createjs.Ease.getPowOut(1));
             this._playerOne.Fade(1, 1500, createjs.Ease.getPowOut(1));

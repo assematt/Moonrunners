@@ -4,6 +4,7 @@ var objects;
         // Constructor
         constructor(assetID, isCentered) {
             super(objects.Game.assetManager.getResult(assetID));
+            this.isActive = false;
             this.name = assetID;
             this._isCentered = isCentered;
             this.hasCollisions = false;
@@ -45,10 +46,13 @@ var objects;
         Start() {
         }
         Update() {
+            // if the object leave the screen destroys it
+            if (this.x < 0 || this.x > objects.Game.currentScene.width || this.y < 0 || this.y > objects.Game.currentScene.height) {
+                this.Destroy();
+            }
         }
-        Reset() {
-        }
-        CheckBound() {
+        Destroy() {
+            objects.Game.currentScene.removeGameObject(this);
         }
         OnCollision(other) { }
     }

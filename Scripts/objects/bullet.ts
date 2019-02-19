@@ -10,8 +10,11 @@ module objects {
 
             this.ownerId = ownerId;
             this.direction = direction;
+            this.hasCollisions = true;
             this.speed = 9.81;
             this.tag = "Bullet";
+            this.name = `bullet_${this.GetId()}`;
+            this.onCollision = this.OnBulletCollision;
         }
 
         public setDirection(direction: "left" | "right") {
@@ -32,7 +35,20 @@ module objects {
         }
 
         public OnBulletCollision(other: GameObject) {
-            
+
+            switch (other.tag)
+            {
+                case "Bullet":
+                {
+                    this.Destroy();
+                    other.Destroy();
+                } break;
+
+                case "Player":
+                {
+                    this.Destroy();
+                } break;
+            }
         }
     }
 }

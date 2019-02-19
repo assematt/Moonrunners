@@ -14,6 +14,7 @@ module objects {
             let health = this._playerHealth;
             let currentSprite: createjs.Sprite;
 
+            // Determine which of the 3 hearth we have to change
             switch (true)
             {
                 case health > 3: currentSprite = this._healthSprites[2];
@@ -25,9 +26,9 @@ module objects {
                 case health >= 0: currentSprite = this._healthSprites[0];
                 break;
             }
-
-            let currentFrame = currentSprite.currentFrame;
-            currentSprite.gotoAndStop(currentFrame + 1);
+            
+            // Advance the current animation (reduce the health in the hearth)
+            currentSprite.advance();
         }
 
         // Constructor
@@ -39,6 +40,7 @@ module objects {
             this._isJumping = false;
             this._isFalling = true;
             this._playerHealth = 6;
+            this.hasCollisions = true;
             this.tag = "Player";
             this.onCollision = this.onCharacterCollision;
         }
@@ -55,11 +57,10 @@ module objects {
             return this._gravity;
         }
         public Shoot() : objects.Bullet {
+            // Spawn a bullet object
             let Bullet = new objects.Bullet("bullet", this.GetId(), this.scaleX < 0 ? "left" : "right" );
             Bullet.x = this.x + (this.scaleX < 0 ? -35 : 33);
             Bullet.y = this.y + 24;
-            Bullet.name = `bullet_${Bullet.GetId()}`; 
-            Bullet.hasCollisions = true;
             return Bullet;
         }
 
@@ -71,15 +72,13 @@ module objects {
                 if (this.scaleX > 0)
                 {
                     this.scaleX = -this.scaleX;
-                }
-                break;
+                } break;
                 case "right":
                 this.x += 2;
                 if (this.scaleX < 0)
                 {
                     this.scaleX = -this.scaleX;
-                }
-                break;
+                } break;
             }
         }
 
@@ -95,36 +94,61 @@ module objects {
                 this.y += (this._gravity * 1) + this._jumpForce;
         }
 
+        public TakeDamage(amount?: number) {
+            if (--this._playerHealth >= 0)
+            {
+                this._RegisterHit();
+            }
+        }
+
+        public Reset(x: number, y: number) {
+            this.x = x;
+            this.y = y;
+            this._jumpForce = 0;
+            this._isJumping = false;
+            this._isFalling = true;
+            this._playerHealth = 6;
+            this.hasCollisions = true;
+            this.alpha = 1;
+
+            // Reset the health sprites
+            this._healthSprites[0].gotoAndStop(this.name);
+            this._healthSprites[1].gotoAndStop(this.name);
+            this._healthSprites[2].gotoAndStop(this.name);
+        }
+
+        public onKilled() {
+            // Play an animation when the player dies
+            createjs.Tween.get(this, {onComplete: () => {
+               
+                // Notify the Play scene this player died one all the animation are finished
+                (Game.currentScene as scenes.PlayScene).OnPlayerDeath(this.name);
+            }}).to({alpha:1}, 50).to({alpha:0}, 50).loop = 10;
+        }
+
         public onCharacterCollision(other: GameObject) {
-
-
             switch (other.tag)
             {
+                // If we collide with the floor we stop falling
                 case "Floor": this._isFalling = false;
                 break;
 
+                // If we collide with a bullet shot by the other player
                 case "Bullet": {
                     if ((<Bullet>other).getOwner() != this.id && this._playerHealth > 0)
                     {
-                        console.log(`${this.name} || ${other.name}`);
-
-                        // Remove the buller from the scene
-                        other.hasCollisions = false;
-                        objects.Game.currentScene.removeGameObject(other);
-
                         // decrease the player health
                         if (--this._playerHealth <= 0)
-                            console.log(`${this.name} is dead`);
+                        {
+                            // If we reach -1 then we are dead
+                            this.onKilled();                            
+                        }
                         
+                        // Change the health bar
                         this._RegisterHit();
-
-                        console.log(`${this.name} health is ${this._playerHealth}`);
                     }
                 } break;
             }
-
-            if (other.name === "floor")
-            this._isFalling = false;
         }
     }
 }
