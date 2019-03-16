@@ -6,7 +6,6 @@ var objects;
             super(assetID, isCentered);
             this._gravity = 0;
             this._jumpForce = 0;
-            this._isJumping = false;
             this._isFalling = true;
             this._playerHealth = 6;
             this.hasCollisions = true;
@@ -43,36 +42,38 @@ var objects;
         }
         Shoot() {
             // Spawn a bullet object
-            let Bullet = new objects.Bullet("bullet", this.GetId(), this.scaleX < 0 ? "left" : "right");
-            Bullet.x = this.x + (this.scaleX < 0 ? -35 : 33);
-            Bullet.y = this.y + 24;
+            let Bullet = new objects.Bullet("bullet", this.GetId(), this.graphics.scaleX < 0 ? "left" : "right");
+            Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -35 : 33), this.graphics.y + 24);
             return Bullet;
         }
         Move(direction) {
             switch (direction) {
-                case "left":
-                    this.x -= 2;
-                    if (this.scaleX > 0) {
-                        this.scaleX = -this.scaleX;
+                case "Left":
+                    {
+                        this.Offset(-2, 0);
+                        if (this.graphics.scaleX > 0)
+                            this.SetScale([-this.graphics.scaleX, this.graphics.scaleY]);
                     }
                     break;
-                case "right":
-                    this.x += 2;
-                    if (this.scaleX < 0) {
-                        this.scaleX = -this.scaleX;
+                case "Right":
+                    {
+                        this.Offset(2, 0);
+                        if (this.graphics.scaleX < 0) {
+                            this.SetScale([-this.graphics.scaleX, this.graphics.scaleY]);
+                        }
                     }
                     break;
             }
         }
         Jump() {
             this._jumpForce = -4;
-            this.y -= 20;
+            this.Offset(0, -20);
             this._isFalling = true;
         }
         Update() {
             super.Update();
             if (this._isFalling)
-                this.y += (this._gravity * 1) + this._jumpForce;
+                this.Offset(0, (this._gravity * 1) + this._jumpForce);
         }
         TakeDamage(amount) {
             if (--this._playerHealth >= 0) {
@@ -80,14 +81,12 @@ var objects;
             }
         }
         Reset(x, y) {
-            this.x = x;
-            this.y = y;
+            this.SetPosition(x, y);
+            this.SetAlpha(1);
             this._jumpForce = 0;
-            this._isJumping = false;
             this._isFalling = true;
             this._playerHealth = 6;
             this.hasCollisions = true;
-            this.alpha = 1;
             // Reset the health sprites
             this._healthSprites[0].gotoAndStop(this.name);
             this._healthSprites[1].gotoAndStop(this.name);
@@ -95,7 +94,7 @@ var objects;
         }
         onKilled() {
             // Play an animation when the player dies
-            createjs.Tween.get(this, { onComplete: () => {
+            createjs.Tween.get(this.graphics, { onComplete: () => {
                     // Notify the Play scene this player died one all the animation are finished
                     objects.Game.currentScene.OnPlayerDeath(this.name);
                 } }).to({ alpha: 1 }, 50).to({ alpha: 0 }, 50).loop = 10;

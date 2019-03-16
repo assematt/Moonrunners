@@ -1,13 +1,14 @@
 module objects {
 
     type CollisionEvent = (other: GameObject) => void;
+    type Tuple<A, B> = [A, B];
+    type Image = createjs.Bitmap | createjs.Sprite;
 
-    export class GameObject extends createjs.Bitmap {
-    
-
+    export class GameObject extends createjs.DisplayObject {
         // private properties
         private _Id: number;
         private static _IdCounter = 0;
+        private _graphics: Image;
 
         // Instance properties
         protected _dX: number;
@@ -21,21 +22,41 @@ module objects {
         public halfHeight: number;
         public hasCollisions: boolean;
         public onCollision: CollisionEvent;
+        public isColliding: boolean;
         public tag: string;
         public isActive = false;
 
         // Constructor
-        constructor(assetID: string, isCentered?: boolean)
+        constructor(assetID: string | createjs.Sprite, isCentered?: boolean)
         {
-            super(objects.Game.assetManager.getResult(assetID));
-            this.name = assetID;
+            super();            
+            //super(objects.Game.assetManager.getResult(assetID));
+            if (assetID instanceof createjs.Sprite) {
+                this._graphics = assetID;
+            }
+            else {
+                this._graphics = new createjs.Bitmap(objects.Game.assetManager.getResult(assetID));
+            }
             this._isCentered = isCentered;
             this.hasCollisions = false; 
             this.tag = "GameObject";
             this.onCollision = this.OnCollision;
+            this.isColliding = false;
             this._initialize();
-
+            
             this._Id = ++GameObject._IdCounter;
+            this.name = `asset-${this._Id}`;
+        }
+
+        // Getters
+        get graphics() : Image {
+            return this._graphics;
+        }
+        get bitmap() : createjs.Bitmap {
+            return this._graphics as createjs.Bitmap;
+        }
+        get sprite() : createjs.Sprite {
+            return this._graphics as createjs.Sprite;
         }
 
         // Private Methods
@@ -44,42 +65,65 @@ module objects {
             this._updateBounds();
             if (this._isCentered == true)
             {
-                this.regX = this.halfWidth;
-                this.regY = this.halfHeight;
+                this._graphics.regX = this.halfWidth;
+                this._graphics.regY = this.halfHeight;
             }
             
         }
         private _updateBounds() {
-            this.width = this.getBounds().width * this.scaleX;
-            this.height = this.getBounds().height * this.scaleY;
+            let graphicsBound = this._graphics.getBounds();
+            this.width = graphicsBound.width * this._graphics.scaleX;
+            this.height = graphicsBound.height * this._graphics.scaleY;
             this.halfWidth = this.width * 0.5;
             this.halfHeight = this.height * 0.5;
+
+            this.setBounds(graphicsBound.x, graphicsBound.y, graphicsBound.width, graphicsBound.height);
         }
 
         // Public Methods
         public GetId() : number {
             return this._Id;
         }
-        public Fade(opacity: number, duration: number, fade: Function, callback?: (...Params: any[]) => void, scope?: any) : createjs.Tween {
-            return createjs.Tween.get(this).to({alpha: opacity}, duration, fade).call(callback ? callback : function(){}, null, scope);
+        public Fade(opacity: number, duration: number, fade: Function) : createjs.Tween {
+            return createjs.Tween.get(this._graphics).to({alpha: opacity}, duration, fade);
         }
-        public setPosition(x: number, y: number) {
-            this.x = x;
-            this.y = y;
+        public Animate(props: any, duration: number, fade: Function) : createjs.Tween {
+            return createjs.Tween.get(this._graphics).to(props, duration, fade);
         }
-        public setScale(Scale: number) {
-            this.scaleX = Scale;
-            this.scaleY = Scale;
+        public SetAlpha(alpha: number) {
+            this._graphics.alpha = alpha;
+        }
+        public SetPosition(x: number, y: number) {
+            this._graphics.x = x;
+            this._graphics.y = y;
+        }
+        public SetScale(Scale: number | Tuple<number, number>) {
+            if (typeof Scale === "number") {
+                this._graphics.scaleX = Scale;
+                this._graphics.scaleY = Scale;
+            }
+            else {
+                this._graphics.scaleX = Scale[0];
+                this._graphics.scaleY = Scale[1];
+            }
+            
             
             this._updateBounds();
+        }
+        public Offset(x: number, y: number) {
+            this._graphics.x += x;
+            this._graphics.y += y;
         }
         public Start() : void {
 
         }
+        public IsColliding(other: GameObject) : boolean {
+            return this._graphics.getTransformedBounds().intersects(other._graphics.getTransformedBounds());
+        }
 
         public Update() : void {
             // if the object leave the screen destroys it
-            if (this.x < 0 || this.x > Game.currentScene.width || this.y < 0 || this.y > Game.currentScene.height)
+            if (this._graphics.x < 0 || this._graphics.x > Game.currentScene.width || this._graphics.y < 0 || this._graphics.y > Game.currentScene.height)
             {
                 this.Destroy();   
             }
@@ -90,5 +134,9 @@ module objects {
         }
 
         public OnCollision(other: GameObject) {}
+
+        public setEventListener() {
+            
+        }
     }
 }

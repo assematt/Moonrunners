@@ -1,53 +1,92 @@
 var objects;
 (function (objects) {
-    class GameObject extends createjs.Bitmap {
+    class GameObject extends createjs.DisplayObject {
         // Constructor
         constructor(assetID, isCentered) {
-            super(objects.Game.assetManager.getResult(assetID));
+            super();
             this.isActive = false;
-            this.name = assetID;
+            //super(objects.Game.assetManager.getResult(assetID));
+            if (assetID instanceof createjs.Sprite) {
+                this._graphics = assetID;
+            }
+            else {
+                this._graphics = new createjs.Bitmap(objects.Game.assetManager.getResult(assetID));
+            }
             this._isCentered = isCentered;
             this.hasCollisions = false;
             this.tag = "GameObject";
             this.onCollision = this.OnCollision;
+            this.isColliding = false;
             this._initialize();
             this._Id = ++GameObject._IdCounter;
+            this.name = `asset-${this._Id}`;
+        }
+        // Getters
+        get graphics() {
+            return this._graphics;
+        }
+        get bitmap() {
+            return this._graphics;
+        }
+        get sprite() {
+            return this._graphics;
         }
         // Private Methods
         _initialize() {
             this._updateBounds();
             if (this._isCentered == true) {
-                this.regX = this.halfWidth;
-                this.regY = this.halfHeight;
+                this._graphics.regX = this.halfWidth;
+                this._graphics.regY = this.halfHeight;
             }
         }
         _updateBounds() {
-            this.width = this.getBounds().width * this.scaleX;
-            this.height = this.getBounds().height * this.scaleY;
+            let graphicsBound = this._graphics.getBounds();
+            this.width = graphicsBound.width * this._graphics.scaleX;
+            this.height = graphicsBound.height * this._graphics.scaleY;
             this.halfWidth = this.width * 0.5;
             this.halfHeight = this.height * 0.5;
+            this.setBounds(graphicsBound.x, graphicsBound.y, graphicsBound.width, graphicsBound.height);
         }
         // Public Methods
         GetId() {
             return this._Id;
         }
-        Fade(opacity, duration, fade, callback, scope) {
-            return createjs.Tween.get(this).to({ alpha: opacity }, duration, fade).call(callback ? callback : function () { }, null, scope);
+        Fade(opacity, duration, fade) {
+            return createjs.Tween.get(this._graphics).to({ alpha: opacity }, duration, fade);
         }
-        setPosition(x, y) {
-            this.x = x;
-            this.y = y;
+        Animate(props, duration, fade) {
+            return createjs.Tween.get(this._graphics).to(props, duration, fade);
         }
-        setScale(Scale) {
-            this.scaleX = Scale;
-            this.scaleY = Scale;
+        SetAlpha(alpha) {
+            this._graphics.alpha = alpha;
+        }
+        SetPosition(x, y) {
+            this._graphics.x = x;
+            this._graphics.y = y;
+        }
+        SetScale(Scale) {
+            if (typeof Scale === "number") {
+                this._graphics.scaleX = Scale;
+                this._graphics.scaleY = Scale;
+            }
+            else {
+                this._graphics.scaleX = Scale[0];
+                this._graphics.scaleY = Scale[1];
+            }
             this._updateBounds();
+        }
+        Offset(x, y) {
+            this._graphics.x += x;
+            this._graphics.y += y;
         }
         Start() {
         }
+        IsColliding(other) {
+            return this._graphics.getTransformedBounds().intersects(other._graphics.getTransformedBounds());
+        }
         Update() {
             // if the object leave the screen destroys it
-            if (this.x < 0 || this.x > objects.Game.currentScene.width || this.y < 0 || this.y > objects.Game.currentScene.height) {
+            if (this._graphics.x < 0 || this._graphics.x > objects.Game.currentScene.width || this._graphics.y < 0 || this._graphics.y > objects.Game.currentScene.height) {
                 this.Destroy();
             }
         }
@@ -55,6 +94,8 @@ var objects;
             objects.Game.currentScene.removeGameObject(this);
         }
         OnCollision(other) { }
+        setEventListener() {
+        }
     }
     GameObject._IdCounter = 0;
     objects.GameObject = GameObject;

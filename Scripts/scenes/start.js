@@ -14,7 +14,7 @@ var scenes;
         }
         startGame() {
             this._gameBackground.off("click", this.startGame);
-            createjs.Tween.get(this._titleLabel).to({ alpha: 0 }, 500, createjs.Ease.getPowOut(1)).call(function () {
+            this._titleLabel.Fade(0, 500, createjs.Ease.getPowOut(1)).call(() => {
                 objects.Game.currentSceneNumber = config.Scene.PLAY;
             });
             createjs.Tween.get(this._continueLabel).to({ alpha: 0 }, 500, createjs.Ease.getPowOut(1));
@@ -28,9 +28,9 @@ var scenes;
             let screenCenter = this.GetCenter();
             // Set the properities of the animated Title label
             this._titleLabel = new objects.GameObject("logo", true);
-            this._titleLabel.alpha = 0;
-            this._titleLabel.setScale(0.15);
-            this._titleLabel.setPosition(screenCenter.x, screenCenter.y - 50);
+            this._titleLabel.SetAlpha(0);
+            this._titleLabel.SetScale(0.15);
+            this._titleLabel.SetPosition(screenCenter.x, screenCenter.y - 50);
             this.addGameObject(this._titleLabel);
             // Set the properities of the animated Title label
             this._continueLabel = new objects.Label("Click anywhere to continue", "20px", "Consolas", "#fff", screenCenter.x, screenCenter.y + 50);
@@ -42,7 +42,7 @@ var scenes;
         Update() {
         }
         Main() {
-            createjs.Tween.get(this._titleLabel).to({ alpha: 1, scaleX: 0.25, scaleY: 0.25 }, 2000, createjs.Ease.getPowOut(1)).call(this.showClickToContinueLabel, null, this);
+            this._titleLabel.Animate({ alpha: 1, scaleX: 0.25, scaleY: 0.25 }, 2000, createjs.Ease.getPowOut(1)).call(this.showClickToContinueLabel, null, this);
         }
     }
     scenes.StartScene = StartScene;

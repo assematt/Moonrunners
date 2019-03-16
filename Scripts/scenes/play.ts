@@ -3,8 +3,7 @@ module scenes {
         // Instance variables
         private _gameBackground : objects.GameObject;
         private _gameBackground2 : objects.GameObject;
-        private _level : objects.GameObject;
-        private _floor : objects.GameObject;
+        //private _floor : objects.GameObject;
         private _playerOne: objects.Characters;
         private _playerTwo: objects.Characters;
         private _playersHealth: createjs.SpriteSheet;
@@ -13,6 +12,8 @@ module scenes {
         private _playerOneScore: objects.Label;
         private _playerTwoScore: objects.Label;
         private _scores: Array<number>;
+        private _level: objects.Level;
+        private _groundTileset: createjs.SpriteSheet;
 
         // Public properties
 
@@ -32,29 +33,38 @@ module scenes {
             this._gameBackground2 = new objects.GameObject("background_2");
             this._gameBackground2.alpha = 0;
 
+            // Load the ground tilset
+            this._groundTileset = new createjs.SpriteSheet({
+                images: [objects.Game.assetManager.getResult("tileset")],
+                frames: {width:40, height:40, count:2, spacing: 1},
+                animations: {Empty: [0], Ground: [1]}
+            });
+
+            // Load the level
+            this._level = new objects.Level();
+            this._level.LoadMap("", this._groundTileset);
+            
             // Set the properities of the floor 
+            /*
             this._floor = new objects.GameObject("floor");
             this._floor.y = 700;
             this._floor.tag = "Floor";
             this._floor.hasCollisions = true;
-
-            // Set the properities of the level 
-            this._level = new objects.GameObject("level");
-            this._level.alpha = 0;
+            */
 
             // Set the properities of the playerOne 
             this._playerOne = new objects.Characters("player1");
-            this._playerOne.x = this.width / 2 - 50;
-            this._playerOne.y = this.height / 2;
-            this._playerOne.alpha = 0;
+            this._playerOne.SetPosition(this.width / 2 - 50, this.height / 2);
+            this._playerOne.SetAlpha(0);
+            this._playerOne.name = "Player1";
 
             // Set the properities of the playerTwo 
             this._playerTwo = new objects.Characters("player2");
-            this._playerTwo.x = this.width / 2 + 50;
-            this._playerTwo.y = this.height / 2;
-            this._playerTwo.alpha = 0;
+            this._playerTwo.SetPosition(this.width / 2 + 50, this.height / 2);
+            this._playerTwo.SetAlpha(0);
+            this._playerTwo.name = "Player2";
 
-            
+            // Load the health tileset
             this._playersHealth = new createjs.SpriteSheet({
                 images: [objects.Game.assetManager.getResult("health")],
                 frames: {width:80, height:80, count:6, regX: 40, regY:40, spacing:0, margin:0},
@@ -86,8 +96,7 @@ module scenes {
             // fill the gameObject vector
             this.addGameObject(this._gameBackground);
             this.addGameObject(this._gameBackground2);
-            this.addGameObject(this._level);
-            this.addGameObject(this._floor);
+            this.addGameObject(...this._level.tiles);
             this.addGameObject(this._playerOne);
             this.addGameObject(this._playerTwo);
 
@@ -117,10 +126,10 @@ module scenes {
             {
                 // Player 1 keys
                 case "a": // move left
-                this._playerOne.Move("left");
+                this._playerOne.Move("Left");
                 break;
                 case "d": // move right
-                this._playerOne.Move("right");
+                this._playerOne.Move("Right");
                 break;
                 case "q": // shoot
                 this.addGameObject(this._playerOne.Shoot());
@@ -131,10 +140,10 @@ module scenes {
 
                 // Player 2 keys
                 case "ArrowLeft": // move left
-                this._playerTwo.Move("left");
+                this._playerTwo.Move("Left");
                 break;
                 case "ArrowRight": // move right
-                this._playerTwo.Move("right");
+                this._playerTwo.Move("Right");
                 break;
                 case "1": // shoot
                 this.addGameObject(this._playerTwo.Shoot());
@@ -171,18 +180,28 @@ module scenes {
 
         public Main() : void {
             this.Zoom(1.15, 1500);
-            this._level.Fade(1, 1500, createjs.Ease.getPowOut(1), function() {
-                // Set players gravity
-                this._playerOne.setGravity(9.81);
-                this._playerTwo.setGravity(9.81);
-
-                // Reactivate the players
-                this._playerOne.isActive = true;
-                this._playerTwo.isActive = true;
-            }, this);
+            /**/
+            /*this._grounds.forEach(sprite => {
+                createjs.Tween.get(sprite).to({opacity: 1}, 1500, createjs.Ease.getPowOut(1)).call(() => {
+                    // Set players gravity
+                    this._playerOne.setGravity(9.81);
+                    this._playerTwo.setGravity(9.81);
+    
+                    // Reactivate the players
+                    this._playerOne.isActive = true;
+                    this._playerTwo.isActive = true;
+                }, null, this);
+            })*/
+            
             this._gameBackground2.Fade(1, 1500, createjs.Ease.getPowOut(1));
-            this._playerOne.Fade(1, 1500, createjs.Ease.getPowOut(1));
-            this._playerTwo.Fade(1, 1500, createjs.Ease.getPowOut(1));
+            this._playerOne.Fade(1, 1500, createjs.Ease.getPowOut(1)).call(() => {
+                this._playerOne.setGravity(9.81);
+                this._playerOne.isActive = true;
+            });
+            this._playerTwo.Fade(1, 1500, createjs.Ease.getPowOut(1)).call(() => {
+                this._playerTwo.setGravity(9.81);
+                this._playerTwo.isActive = true;
+            });
         }
     }
 }

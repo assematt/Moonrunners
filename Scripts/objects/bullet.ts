@@ -30,8 +30,7 @@ module objects {
 
         public Update() : void {
             super.Update();
-            
-            this.x += (this.direction == "right" ? 1 : -1) * this.speed;
+            this.Offset((this.direction == "right" ? 1 : -1) * this.speed, 0);
         }
 
         public OnBulletCollision(other: GameObject) {

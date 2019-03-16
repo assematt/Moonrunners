@@ -17,7 +17,7 @@ module objects {
             this.width = width;
             this.height = height;
 
-            /**/this.setBounds(0, 0, width, height);
+            this.setBounds(0, 0, width, height);
             this.x = this.GetCenter().x;
             this.y = this.GetCenter().y;
             this.regX = this.width / 2;
@@ -29,19 +29,8 @@ module objects {
 
         // Private methods
         private _DetectCollisions() {
-            // Get the entites that can collide
-            this._gameObjects.map(entity => {
-                let Elem = entity[1];
 
-                if (Elem.isActive && Elem.hasCollisions)
-                {
-                    Elem.setBounds(Elem.x, Elem.y, Elem.width, Elem.height);
-                }                
-            });
-
-            let CheckCollisions = function(Elem1: GameObject, Elem2: GameObject) : boolean {
-                return Elem1.getBounds().intersects(Elem2.getBounds());
-            };
+            this._gameObjects.forEach(gameObject => gameObject[1].isColliding = false);
 
             let size = this._gameObjects.length;
             for (let LI = 0; LI < size; ++LI)
@@ -63,8 +52,10 @@ module objects {
 
                         let Elem2 = this._gameObjects[RI][1];
 
-                        if (Elem1 != Elem2 && Elem2.hasCollisions && CheckCollisions(Elem1, Elem2))
+                        if (Elem1 != Elem2 && Elem2.hasCollisions && Elem1.IsColliding(Elem2))
                         {
+                            Elem1.isColliding = true;
+                            Elem2.isColliding = true;
                             Elem1.onCollision(Elem2);
                         }
                     }
@@ -91,15 +82,16 @@ module objects {
         public GetCenter() : objects.Vector2 {
             return new objects.Vector2(this.width / 2, this.height / 2);
         }
-
-        public addGameObject(entity: GameObject) {
-            this.addChild(entity);
-            entity.isActive = true;
-            this._gameObjects.push([entity.GetId(), entity]);
+        public addGameObject(...entities: GameObject[]) {
+            entities.forEach(entity => {
+                this.addChild(entity.graphics);
+                entity.isActive = true;
+                this._gameObjects.push([entity.GetId(), entity]);
+            });
         }
         public removeGameObject(entity: GameObject) {
 
-            this.removeChild(entity);
+            this.removeChild(entity.graphics);
             this._gameObjects = this._gameObjects.filter(value => value[0] != entity.GetId());
         }
 
