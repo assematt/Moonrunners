@@ -4,6 +4,7 @@ module scenes {
         private _gameBackground : objects.GameObject;
         private _titleLabel : objects.GameObject;
         private _continueLabel : objects.GameObject;
+        private _instructions : objects.GameObject;
 
         // Public properties
 
@@ -17,12 +18,14 @@ module scenes {
         // Private Methods
         private showClickToContinueLabel() : void {
             this._continueLabel.Fade(1, 1500, createjs.Ease.getPowOut(1));
+            this._instructions.Fade(1, 1500, createjs.Ease.getPowOut(1));
             this._gameBackground.On("click", this.startGame, this);
         }
     
         private startGame() : void {
             this._gameBackground.Off("click", this.startGame);
             this._continueLabel.Fade(0, 500, createjs.Ease.getPowOut(1));
+            this._instructions.Fade(0, 500, createjs.Ease.getPowOut(1));
             this._titleLabel.Fade(0, 500, createjs.Ease.getPowOut(1)).call( () => {
                 objects.Game.currentSceneNumber = config.Scene.PLAY;
             });
@@ -49,6 +52,12 @@ module scenes {
             this._continueLabel.SetAlpha(0);
             this._continueLabel.label.textAlign = "center";
             this.addGameObject(this._continueLabel);
+
+            // Set the properities of the animated Title label
+            this._instructions = new objects.GameObject(new objects.Label("Player1: 'a'/'d' to move, 'spacebar' to jump, 'q' to shoot\n\nPlayer2: 'left'/'right' to move, 'num0' to jump, 'num1' to shoot", "18px", "Consolas", "#fff", screenCenter.x, screenCenter.y + 100));
+            this._instructions.SetAlpha(0);
+            this._instructions.label.textAlign = "center";
+            this.addGameObject(this._instructions);
 
             this.Main();
         }
