@@ -3,6 +3,7 @@ module objects {
     type CollisionEvent = (other: GameObject) => void;
     type Tuple<A, B> = [A, B];
     type Image = createjs.Bitmap | createjs.Sprite | Label;
+    type ObjectTag = "GameObject" | "Player" | "Floor" | "Bullet" | "PowerUp";
 
     export class GameObject extends createjs.DisplayObject {
         // private properties
@@ -23,7 +24,7 @@ module objects {
         public hasCollisions: boolean;
         public onCollision: CollisionEvent;
         public isColliding: boolean;
-        public tag: string;
+        public tag: ObjectTag;
         public isActive = false;
 
         // Constructor

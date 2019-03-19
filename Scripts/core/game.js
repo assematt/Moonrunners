@@ -20,7 +20,10 @@
         { id: "player2", src: "./Assets/images/player2.png" },
         { id: "bullet", src: "./Assets/images/bullet.png" },
         { id: "health", src: "./Assets/images/health.png" },
-        { id: "tileset", src: "./Assets/images/tiles.png" }
+        { id: "health_bar", src: "./Assets/images/health_bar.png" },
+        { id: "tileset", src: "./Assets/images/tiles.png" },
+        { id: "powerup", src: "./Assets/images/powerup.png" },
+        { id: "powerup_health", src: "./Assets/images/powerup_health.png" }
     ];
     // Preload the required assets
     function Init() {

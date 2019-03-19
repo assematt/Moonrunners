@@ -11,26 +11,60 @@ module objects {
         private _playerHealth: number;
         private _healthSprites: Array<createjs.Sprite>;
 
-        private _RegisterHit() {
+        private _UpdateHealthSprites() {
 
             let health = this._playerHealth;
-            let currentSprite: createjs.Sprite;
+
+            // Reset all the sprite
+            this._healthSprites[0].gotoAndStop(this.name);
+            this._healthSprites[1].gotoAndStop(this.name);
+            this._healthSprites[2].gotoAndStop(this.name);
 
             // Determine which of the 3 hearth we have to change
             switch (true)
             {
-                case health > 3: currentSprite = this._healthSprites[2];
+                case health === 5:
+                this._healthSprites[0].advance();
                 break;
 
-                case health > 1: currentSprite = this._healthSprites[1];
+                case health === 4:
+                this._healthSprites[0].advance();
+                this._healthSprites[0].advance();
                 break;
 
-                case health >= 0: currentSprite = this._healthSprites[0];
+                case health === 3:
+                this._healthSprites[0].advance();
+                this._healthSprites[0].advance();
+                this._healthSprites[1].advance();
+                break;
+
+                case health === 2:
+                this._healthSprites[0].advance();
+                this._healthSprites[0].advance();
+                this._healthSprites[1].advance();
+                this._healthSprites[1].advance();
+                break;
+
+                case health === 1:
+                this._healthSprites[0].advance();
+                this._healthSprites[0].advance();
+                this._healthSprites[1].advance();
+                this._healthSprites[1].advance();
+                this._healthSprites[2].advance();
+                break;
+
+                case health === 0:
+                this._healthSprites[0].advance();
+                this._healthSprites[0].advance();
+                this._healthSprites[1].advance();
+                this._healthSprites[1].advance();
+                this._healthSprites[2].advance();
+                this._healthSprites[2].advance();
                 break;
             }
             
             // Advance the current animation (reduce the health in the hearth)
-            currentSprite.advance();
+            //currentSprite.advance();
         }
 
         // Constructor
@@ -60,7 +94,7 @@ module objects {
         public Shoot() : objects.Bullet {
             // Spawn a bullet object
             let Bullet = new objects.Bullet("bullet", this.GetId(), this.graphics.scaleX < 0 ? "left" : "right" );
-            Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -35 : 33), this.graphics.y + 24);
+            Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -40 : 33), this.graphics.y + 24);
             return Bullet;
         }
 
@@ -68,12 +102,12 @@ module objects {
             switch (direction)
             {
                 case "Left": {
-                    this.Offset(-2, 0);
+                    this.Offset(-5, 0);
                     if (this.graphics.scaleX > 0)
                         this.SetScale([-this.graphics.scaleX, this.graphics.scaleY]);
                 } break;
                 case "Right":{
-                    this.Offset(2, 0);
+                    this.Offset(5, 0);
                     if (this.graphics.scaleX < 0)
                     {
                         this.SetScale([-this.graphics.scaleX, this.graphics.scaleY]);
@@ -99,7 +133,14 @@ module objects {
         public TakeDamage(amount?: number) {
             if (--this._playerHealth >= 0)
             {
-                this._RegisterHit();
+                this._UpdateHealthSprites();
+            }
+        }
+
+        public Heal(amount?: number) {
+            if (this._playerHealth < 6) {
+                ++this._playerHealth;
+                this._UpdateHealthSprites();
             }
         }
 
@@ -146,7 +187,7 @@ module objects {
                         }
                         
                         // Change the health bar
-                        this._RegisterHit();
+                        this._UpdateHealthSprites();
                     }
                 } break;
             }

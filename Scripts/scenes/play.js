@@ -37,10 +37,10 @@ var scenes;
             this._playersHealth = new createjs.SpriteSheet({
                 images: [objects.Game.assetManager.getResult("health")],
                 frames: { width: 80, height: 80, count: 6, regX: 40, regY: 40, spacing: 0, margin: 0 },
-                animations: { player1: [0, 2], player2: [3, 5] }
+                animations: { Player1: [0, 2], Player2: [3, 5] }
             });
             // Player 1 health
-            this._playerOneHealth = new Array(new createjs.Sprite(this._playersHealth, "player1"), new createjs.Sprite(this._playersHealth, "player1"), new createjs.Sprite(this._playersHealth, "player1"));
+            this._playerOneHealth = new Array(new createjs.Sprite(this._playersHealth, "Player1"), new createjs.Sprite(this._playersHealth, "Player1"), new createjs.Sprite(this._playersHealth, "Player1"));
             this._playerOneHealth.forEach((sprite, index) => {
                 sprite.stop();
                 sprite.x = 200 + (40 * index);
@@ -50,7 +50,7 @@ var scenes;
             });
             this._playerOne.SetHealhtSprite(this._playerOneHealth);
             // Player 2 health
-            this._playerTwoHealth = new Array(new createjs.Sprite(this._playersHealth, "player2"), new createjs.Sprite(this._playersHealth, "player2"), new createjs.Sprite(this._playersHealth, "player2"));
+            this._playerTwoHealth = new Array(new createjs.Sprite(this._playersHealth, "Player2"), new createjs.Sprite(this._playersHealth, "Player2"), new createjs.Sprite(this._playersHealth, "Player2"));
             this._playerTwoHealth.forEach((sprite, index) => {
                 sprite.stop();
                 sprite.x = this.GetSize().x - 200 - (40 * index);
@@ -138,6 +138,16 @@ var scenes;
                 this._playerTwo.setGravity(9.81);
                 this._playerTwo.isActive = true;
             });
+            this._timer = setInterval(() => this.SpawnPowerUp(), 5000);
+        }
+        SpawnPowerUp() {
+            if (this._powerUp)
+                this.removeGameObject(this._powerUp);
+            this._powerUp = new objects.PowerUp("powerup_health", "Health");
+            this._powerUp.graphics.x = Math.random() * 1420 + 500;
+            this._powerUp.graphics.y = 0;
+            this.addGameObject(this._powerUp);
+            console.log("Object spawnded");
         }
     }
     scenes.PlayScene = PlayScene;

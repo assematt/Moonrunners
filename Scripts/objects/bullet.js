@@ -22,7 +22,7 @@ var objects;
         }
         Update() {
             super.Update();
-            this.Offset((this.direction == "right" ? 1 : -1) * this.speed, 0);
+            this.Offset((this.direction === "right" ? 1 : -1) * this.speed, 0);
         }
         OnBulletCollision(other) {
             switch (other.tag) {
