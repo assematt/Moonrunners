@@ -64,6 +64,7 @@ var objects;
                     }
                     break;
             }
+            this._isFalling = true;
         }
         Jump() {
             this._jumpForce = -4;

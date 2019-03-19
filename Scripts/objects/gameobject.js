@@ -103,8 +103,6 @@ var objects;
         Off(type, listener, useCapture) {
             this._graphics.off(type, listener, useCapture);
         }
-        setEventListener() {
-        }
     }
     GameObject._IdCounter = 0;
     objects.GameObject = GameObject;

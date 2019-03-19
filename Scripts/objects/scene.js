@@ -41,12 +41,12 @@ var objects;
         // Public methods
         Start() { }
         Update() {
+            // Does collisions
+            this._DetectCollisions();
             // Update every single entity
             this._gameObjects.forEach(gameObject => {
                 gameObject[1].Update();
             });
-            // Does collisions
-            this._DetectCollisions();
         }
         Main() { }
         GetSize() {

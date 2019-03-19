@@ -142,9 +142,5 @@ module objects {
         public Off(type: string, listener: (eventObj: Object) => void, useCapture?: boolean) {
             this._graphics.off(type, listener, useCapture);
         }
-
-        public setEventListener() {
-            
-        }
     }
 }

@@ -80,6 +80,8 @@ module objects {
                     }
                 } break;
             }
+
+            this._isFalling = true;
         }
 
         public Jump() : void {

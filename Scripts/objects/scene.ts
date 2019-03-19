@@ -67,13 +67,13 @@ module objects {
         public Start() : void {}
         public Update() : void
         {
+            // Does collisions
+            this._DetectCollisions();
+
             // Update every single entity
             this._gameObjects.forEach(gameObject => {
                 gameObject[1].Update();
             });
-
-            // Does collisions
-            this._DetectCollisions();
         }
         public Main() : void {}
         public GetSize() : objects.Vector2 {
