@@ -8,9 +8,10 @@ module scenes {
         private _playersHealth: createjs.SpriteSheet;
         private _playerOneHealth: createjs.Sprite[];
         private _playerTwoHealth: createjs.Sprite[];
-        private _playerOneScore: objects.GameObject;
-        private _playerTwoScore: objects.GameObject;
-        private _scores: Array<number>;
+        //private _playerOneScore: objects.GameObject;
+        //private _playerTwoScore: objects.GameObject;
+        //private _scores: Array<number>;
+        private _score: objects.Score;
         private _level: objects.Level;
         private _groundTileset: createjs.SpriteSheet;
         private _timer: number;
@@ -22,13 +23,14 @@ module scenes {
         constructor(width: number, height: number) {
             super(width, height);
 
-            this._scores = [0, 0];
-
             this.Start();
         }
 
         // Public Methods
-        public Start() : void {            
+        public Start() : void {
+            // cache the center of the screen position
+            let screenCenter = this.GetCenter();
+
             // Set the properities of the background 
             this._gameBackground = new objects.GameObject("background");
             this._gameBackground2 = new objects.GameObject("background_2");
@@ -102,11 +104,9 @@ module scenes {
             this._playerTwoHealth.forEach(sprite => this.addChild(sprite));
 
             // The score label
-            this._playerOneScore = new objects.GameObject(new objects.Label("0", "50px", "Consolas", "#fff", 178, 125));
-            this.addGameObject(this._playerOneScore);
-
-            this._playerTwoScore = new objects.GameObject(new objects.Label("0", "50px", "Consolas", "#fff", this.GetSize().x - 206, 125));
-            this.addGameObject(this._playerTwoScore);
+            this._score = new objects.Score(screenCenter.x);
+            this.addGameObject(...this._score.scores);
+            this.addGameObject(this._score.title);
 
             this.Main();
         }
@@ -155,12 +155,12 @@ module scenes {
         public OnPlayerDeath(who: string) {
             if (who == "Player1")
             {
-                this._playerTwoScore.label.text = (++this._scores[1]).toString();
+                this._score.incrementScore("Player2");
             }
             else if (who == "Player2")
             {
-                this._playerOneScore.label.text = (++this._scores[0]).toString();
-            } 
+                this._score.incrementScore("Player1");
+            }    
 
             this.ResetPLayers();
         }

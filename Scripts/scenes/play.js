@@ -5,11 +5,12 @@ var scenes;
         // Constructor
         constructor(width, height) {
             super(width, height);
-            this._scores = [0, 0];
             this.Start();
         }
         // Public Methods
         Start() {
+            // cache the center of the screen position
+            let screenCenter = this.GetCenter();
             // Set the properities of the background 
             this._gameBackground = new objects.GameObject("background");
             this._gameBackground2 = new objects.GameObject("background_2");
@@ -72,10 +73,9 @@ var scenes;
             this._playerOneHealth.forEach(sprite => this.addChild(sprite));
             this._playerTwoHealth.forEach(sprite => this.addChild(sprite));
             // The score label
-            this._playerOneScore = new objects.GameObject(new objects.Label("0", "50px", "Consolas", "#fff", 178, 125));
-            this.addGameObject(this._playerOneScore);
-            this._playerTwoScore = new objects.GameObject(new objects.Label("0", "50px", "Consolas", "#fff", this.GetSize().x - 206, 125));
-            this.addGameObject(this._playerTwoScore);
+            this._score = new objects.Score(screenCenter.x);
+            this.addGameObject(...this._score.scores);
+            this.addGameObject(this._score.title);
             this.Main();
         }
         HandleEvents() {
@@ -116,10 +116,10 @@ var scenes;
         }
         OnPlayerDeath(who) {
             if (who == "Player1") {
-                this._playerTwoScore.label.text = (++this._scores[1]).toString();
+                this._score.incrementScore("Player2");
             }
             else if (who == "Player2") {
-                this._playerOneScore.label.text = (++this._scores[0]).toString();
+                this._score.incrementScore("Player1");
             }
             this.ResetPLayers();
         }
