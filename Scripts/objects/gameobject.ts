@@ -2,7 +2,7 @@ module objects {
 
     type CollisionEvent = (other: GameObject) => void;
     type Tuple<A, B> = [A, B];
-    type Image = createjs.Bitmap | createjs.Sprite;
+    type Image = createjs.Bitmap | createjs.Sprite | Label;
 
     export class GameObject extends createjs.DisplayObject {
         // private properties
@@ -27,11 +27,11 @@ module objects {
         public isActive = false;
 
         // Constructor
-        constructor(assetID: string | createjs.Sprite, isCentered?: boolean)
+        constructor(assetID: string | createjs.Sprite | Label, isCentered?: boolean)
         {
             super();            
             //super(objects.Game.assetManager.getResult(assetID));
-            if (assetID instanceof createjs.Sprite) {
+            if (assetID instanceof createjs.Sprite || assetID instanceof Label) {
                 this._graphics = assetID;
             }
             else {
@@ -58,6 +58,9 @@ module objects {
         get sprite() : createjs.Sprite {
             return this._graphics as createjs.Sprite;
         }
+        get label() : Label {
+            return this._graphics as Label;
+        }
 
         // Private Methods
         private _initialize() : void {
@@ -76,7 +79,6 @@ module objects {
             this.height = graphicsBound.height * this._graphics.scaleY;
             this.halfWidth = this.width * 0.5;
             this.halfHeight = this.height * 0.5;
-
             this.setBounds(graphicsBound.x, graphicsBound.y, graphicsBound.width, graphicsBound.height);
         }
 
@@ -134,6 +136,12 @@ module objects {
         }
 
         public OnCollision(other: GameObject) {}
+        public On(type: string, listener: (eventObj: Object) => void, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Function {
+            return this._graphics.on(type, listener, scope, once, data, useCapture);
+        }
+        public Off(type: string, listener: (eventObj: Object) => void, useCapture?: boolean) {
+            this._graphics.off(type, listener, useCapture);
+        }
 
         public setEventListener() {
             

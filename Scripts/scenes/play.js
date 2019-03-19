@@ -23,13 +23,6 @@ var scenes;
             // Load the level
             this._level = new objects.Level();
             this._level.LoadMap("", this._groundTileset);
-            // Set the properities of the floor 
-            /*
-            this._floor = new objects.GameObject("floor");
-            this._floor.y = 700;
-            this._floor.tag = "Floor";
-            this._floor.hasCollisions = true;
-            */
             // Set the properities of the playerOne 
             this._playerOne = new objects.Characters("player1");
             this._playerOne.SetPosition(this.width / 2 - 50, this.height / 2);
@@ -79,10 +72,10 @@ var scenes;
             this._playerOneHealth.forEach(sprite => this.addChild(sprite));
             this._playerTwoHealth.forEach(sprite => this.addChild(sprite));
             // The score label
-            this._playerOneScore = new objects.Label("0", "50px", "Consolas", "#fff", 178, 125);
-            this.addChild(this._playerOneScore);
-            this._playerTwoScore = new objects.Label("0", "50px", "Consolas", "#fff", this.GetSize().x - 206, 125);
-            this.addChild(this._playerTwoScore);
+            this._playerOneScore = new objects.GameObject(new objects.Label("0", "50px", "Consolas", "#fff", 178, 125));
+            this.addGameObject(this._playerOneScore);
+            this._playerTwoScore = new objects.GameObject(new objects.Label("0", "50px", "Consolas", "#fff", this.GetSize().x - 206, 125));
+            this.addGameObject(this._playerTwoScore);
             this.Main();
         }
         HandleEvents() {
@@ -122,11 +115,11 @@ var scenes;
             this._playerTwo.Reset(this.width / 2 + 50, this.height / 2);
         }
         OnPlayerDeath(who) {
-            if (who == "player1") {
-                this._playerTwoScore.text = (++this._scores[1]).toString();
+            if (who == "Player1") {
+                this._playerTwoScore.label.text = (++this._scores[1]).toString();
             }
-            else if (who == "player2") {
-                this._playerOneScore.text = (++this._scores[0]).toString();
+            else if (who == "Player2") {
+                this._playerOneScore.label.text = (++this._scores[0]).toString();
             }
             this.ResetPLayers();
         }
@@ -136,18 +129,6 @@ var scenes;
         }
         Main() {
             this.Zoom(1.15, 1500);
-            /**/
-            /*this._grounds.forEach(sprite => {
-                createjs.Tween.get(sprite).to({opacity: 1}, 1500, createjs.Ease.getPowOut(1)).call(() => {
-                    // Set players gravity
-                    this._playerOne.setGravity(9.81);
-                    this._playerTwo.setGravity(9.81);
-    
-                    // Reactivate the players
-                    this._playerOne.isActive = true;
-                    this._playerTwo.isActive = true;
-                }, null, this);
-            })*/
             this._gameBackground2.Fade(1, 1500, createjs.Ease.getPowOut(1));
             this._playerOne.Fade(1, 1500, createjs.Ease.getPowOut(1)).call(() => {
                 this._playerOne.setGravity(9.81);

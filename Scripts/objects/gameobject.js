@@ -6,7 +6,7 @@ var objects;
             super();
             this.isActive = false;
             //super(objects.Game.assetManager.getResult(assetID));
-            if (assetID instanceof createjs.Sprite) {
+            if (assetID instanceof createjs.Sprite || assetID instanceof objects.Label) {
                 this._graphics = assetID;
             }
             else {
@@ -29,6 +29,9 @@ var objects;
             return this._graphics;
         }
         get sprite() {
+            return this._graphics;
+        }
+        get label() {
             return this._graphics;
         }
         // Private Methods
@@ -94,6 +97,12 @@ var objects;
             objects.Game.currentScene.removeGameObject(this);
         }
         OnCollision(other) { }
+        On(type, listener, scope, once, data, useCapture) {
+            return this._graphics.on(type, listener, scope, once, data, useCapture);
+        }
+        Off(type, listener, useCapture) {
+            this._graphics.off(type, listener, useCapture);
+        }
         setEventListener() {
         }
     }
