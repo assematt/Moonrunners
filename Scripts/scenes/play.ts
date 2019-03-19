@@ -8,10 +8,8 @@ module scenes {
         private _playersHealth: createjs.SpriteSheet;
         private _playerOneHealth: createjs.Sprite[];
         private _playerTwoHealth: createjs.Sprite[];
-        //private _playerOneScore: objects.GameObject;
-        //private _playerTwoScore: objects.GameObject;
-        //private _scores: Array<number>;
         private _score: objects.Score;
+        private _ammo: objects.Ammo;
         private _level: objects.Level;
         private _groundTileset: createjs.SpriteSheet;
         private _timer: number;
@@ -88,12 +86,22 @@ module scenes {
             });
             this._playerTwo.SetHealhtSprite(this._playerTwoHealth);
 
+            // The score label
+            this._score = new objects.Score(screenCenter.x);
+
+            // The ammo label
+            this._ammo = new objects.Ammo();
+
             // fill the gameObject vector
             this.addGameObject(this._gameBackground);
             this.addGameObject(this._gameBackground2);
             this.addGameObject(...this._level.tiles);
             this.addGameObject(this._playerOne);
             this.addGameObject(this._playerTwo);
+            this.addGameObject(...this._score.scores);
+            this.addGameObject(this._score.title);
+            this.addGameObject(...this._ammo.ammoImages);
+            this.addGameObject(...this._ammo.ammoText);
 
             // Deactivate the players
             this._playerOne.isActive = false;
@@ -103,10 +111,7 @@ module scenes {
             this._playerOneHealth.forEach(sprite => this.addChild(sprite));
             this._playerTwoHealth.forEach(sprite => this.addChild(sprite));
 
-            // The score label
-            this._score = new objects.Score(screenCenter.x);
-            this.addGameObject(...this._score.scores);
-            this.addGameObject(this._score.title);
+            
 
             this.Main();
         }
@@ -125,7 +130,12 @@ module scenes {
                 this._playerOne.Move("Right");
                 break;
                 case "q": // shoot
-                this.addGameObject(this._playerOne.Shoot());
+                {
+                    let bullet = this._playerOne.Shoot();
+                    if (bullet) {
+                        this.addGameObject(this._playerOne.Shoot());
+                    }
+                }                
                 break;
                 case " ": // jump
                 this._playerOne.Jump();
@@ -139,7 +149,12 @@ module scenes {
                 this._playerTwo.Move("Right");
                 break;
                 case "1": // shoot
-                this.addGameObject(this._playerTwo.Shoot());
+                {
+                    let bullet = this._playerTwo.Shoot();
+                    if (bullet) {
+                        this.addGameObject(bullet);
+                    }
+                }
                 break;
                 case "0": // jump
                 this._playerTwo.Jump();
@@ -169,6 +184,9 @@ module scenes {
             this.HandleEvents();
             
             super.Update();
+
+            this._ammo.setAmmoText("Player1", this._playerOne.ammoCount);
+            this._ammo.setAmmoText("Player2", this._playerTwo.ammoCount);
         }
 
         public Main() : void {
@@ -191,7 +209,12 @@ module scenes {
             if (this._powerUp)
                 this.removeGameObject(this._powerUp);
 
-            this._powerUp = new objects.PowerUp("powerup_health", "Health");
+            if (Math.random() > 0.5) {
+                this._powerUp = new objects.PowerUp("powerup_health", "Health");
+            }
+            else {
+                this._powerUp = new objects.PowerUp("powerup", "Ammo");
+            }            
             this._powerUp.graphics.x = Math.random() * 1420 + 500;
             this._powerUp.graphics.y = 0;
 

@@ -4,6 +4,7 @@ var objects;
         // Constructor
         constructor(assetID, isCentered) {
             super(assetID, isCentered);
+            this._ammoCount = 100;
             this._gravity = 0;
             this._jumpForce = 0;
             this._isFalling = true;
@@ -68,10 +69,13 @@ var objects;
             return this._gravity;
         }
         Shoot() {
-            // Spawn a bullet object
-            let Bullet = new objects.Bullet("bullet", this.GetId(), this.graphics.scaleX < 0 ? "left" : "right");
-            Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -40 : 33), this.graphics.y + 24);
-            return Bullet;
+            if (this._ammoCount-- > 0) {
+                // Spawn a bullet object
+                let Bullet = new objects.Bullet("bullet", this.GetId(), this.graphics.scaleX < 0 ? "left" : "right");
+                Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -40 : 33), this.graphics.y + 24);
+                return Bullet;
+            }
+            return null;
         }
         Move(direction) {
             switch (direction) {
@@ -94,9 +98,11 @@ var objects;
             this._isFalling = true;
         }
         Jump() {
-            this._jumpForce = -4;
-            this.Offset(0, -20);
-            this._isFalling = true;
+            if (this.graphics.y > 75) {
+                this._jumpForce = -4;
+                this.Offset(0, -20);
+                this._isFalling = true;
+            }
         }
         Update() {
             super.Update();
@@ -121,6 +127,7 @@ var objects;
             this._isFalling = true;
             this._playerHealth = 6;
             this.hasCollisions = true;
+            this._ammoCount = 100;
             // Reset the health sprites
             this._healthSprites[0].gotoAndStop(this.name);
             this._healthSprites[1].gotoAndStop(this.name);
@@ -153,6 +160,17 @@ var objects;
                         }
                     }
                     break;
+            }
+        }
+        get ammoCount() {
+            return this._ammoCount;
+        }
+        reloadAmmo(value) {
+            if ((value + this._ammoCount) <= 100) {
+                this._ammoCount += value;
+            }
+            else {
+                this._ammoCount = 100;
             }
         }
     }

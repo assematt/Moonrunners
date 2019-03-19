@@ -38,7 +38,16 @@ module objects {
 
                 case "Player":
                     let player = (other as Characters)
-                    player.Heal();
+                    switch (this._type) {
+                        case "Ammo":
+                        player.reloadAmmo(10);
+                        break;
+                        case "Gun":
+                        break;
+                        case "Health":
+                        player.Heal();
+                        break;
+                    }
                     Game.currentScene.removeGameObject(this);
                 break;
             }

@@ -10,6 +10,7 @@ module objects {
         private _isFalling: boolean;
         private _playerHealth: number;
         private _healthSprites: Array<createjs.Sprite>;
+        private _ammoCount = 100;
 
         private _UpdateHealthSprites() {
 
@@ -91,11 +92,15 @@ module objects {
         public GetGravity() : number {
             return this._gravity;
         }
-        public Shoot() : objects.Bullet {
-            // Spawn a bullet object
-            let Bullet = new objects.Bullet("bullet", this.GetId(), this.graphics.scaleX < 0 ? "left" : "right" );
-            Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -40 : 33), this.graphics.y + 24);
-            return Bullet;
+        public Shoot() : objects.Bullet | null {
+            if (this._ammoCount-- > 0) {
+                // Spawn a bullet object
+                let Bullet = new objects.Bullet("bullet", this.GetId(), this.graphics.scaleX < 0 ? "left" : "right" );
+                Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -40 : 33), this.graphics.y + 24);
+                return Bullet;
+            }
+            
+            return null;
         }
 
         public Move(direction: Direction) {
@@ -119,9 +124,11 @@ module objects {
         }
 
         public Jump() : void {
-            this._jumpForce = -4;
-            this.Offset(0, -20);
-            this._isFalling = true;
+            if (this.graphics.y > 75) {
+                this._jumpForce = -4;
+                this.Offset(0, -20);
+                this._isFalling = true;
+            }
         }
 
         public Update() : void {
@@ -151,6 +158,7 @@ module objects {
             this._isFalling = true;
             this._playerHealth = 6;
             this.hasCollisions = true;
+            this._ammoCount = 100;
 
             // Reset the health sprites
             this._healthSprites[0].gotoAndStop(this.name);
@@ -190,6 +198,18 @@ module objects {
                         this._UpdateHealthSprites();
                     }
                 } break;
+            }
+        }
+
+        get ammoCount() : number {
+            return this._ammoCount;
+        }
+        public reloadAmmo(value: number) {
+            if ((value + this._ammoCount) <= 100) {
+                this._ammoCount += value;
+            }
+            else {
+                this._ammoCount = 100;
             }
         }
     }

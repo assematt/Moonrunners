@@ -25,7 +25,16 @@ var objects;
                     break;
                 case "Player":
                     let player = other;
-                    player.Heal();
+                    switch (this._type) {
+                        case "Ammo":
+                            player.reloadAmmo(10);
+                            break;
+                        case "Gun":
+                            break;
+                        case "Health":
+                            player.Heal();
+                            break;
+                    }
                     objects.Game.currentScene.removeGameObject(this);
                     break;
             }
