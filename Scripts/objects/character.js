@@ -75,6 +75,9 @@ var objects;
                 Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -40 : 33), this.graphics.y + 24);
                 return Bullet;
             }
+            else if (this._ammoCount < 0) {
+                this._ammoCount = 0;
+            }
             return null;
         }
         Move(direction) {

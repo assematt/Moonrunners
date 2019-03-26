@@ -202,7 +202,16 @@ module scenes {
                 this._playerTwo.isActive = true;
             });
 
-            this._timer = setInterval(() => this.SpawnPowerUp(), 5000);
+            this._timer = setInterval(() => this.SpawnPowerUp(), 10000);
+            this._timer = setInterval(() => this.SlowAmmoReload(), 1000);
+        }
+
+        public SlowAmmoReload() : void {
+            if (this._playerOne.ammoCount < 100)
+                    this._playerOne.reloadAmmo(1);
+                
+                if (this._playerTwo.ammoCount < 100)
+                    this._playerTwo.reloadAmmo(1);
         }
 
         public SpawnPowerUp() : void {
