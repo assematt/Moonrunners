@@ -14,7 +14,7 @@ var scenes;
             // Set the properities of the background 
             this._gameBackground = new objects.GameObject("background");
             this._gameBackground2 = new objects.GameObject("background_2");
-            this._gameBackground2.alpha = 0;
+            this._gameBackground2.SetAlpha(0);
             // Load the ground tilset
             this._groundTileset = new createjs.SpriteSheet({
                 images: [objects.Game.assetManager.getResult("tileset")],
@@ -83,9 +83,9 @@ var scenes;
             this.Main();
         }
         HandleEvents() {
-            if (!objects.Game.EventManager || !this._playerOne.isActive || !this._playerTwo.isActive)
+            if (!objects.Game.eventManager || !this._playerOne.isActive || !this._playerTwo.isActive)
                 return;
-            switch (objects.Game.EventManager.key) {
+            switch (objects.Game.eventManager.key) {
                 // Player 1 keys
                 case "a": // move left
                     this._playerOne.Move("Left");
@@ -135,6 +135,11 @@ var scenes;
             else if (who == "Player2") {
                 this._score.incrementScore("Player1");
             }
+            let isGameEnded = this._score.winningPlayer;
+            if (isGameEnded[0]) {
+                objects.Game.currentSceneNumber = config.Scene.OVER;
+                objects.Game.winningPlayer = isGameEnded[1];
+            }
             this.ResetPLayers();
         }
         Update() {
@@ -154,14 +159,7 @@ var scenes;
                 this._playerTwo.setGravity(9.81);
                 this._playerTwo.isActive = true;
             });
-            this._timer = setInterval(() => this.SpawnPowerUp(), 10000);
-            this._timer = setInterval(() => this.SlowAmmoReload(), 1000);
-        }
-        SlowAmmoReload() {
-            if (this._playerOne.ammoCount < 100)
-                this._playerOne.reloadAmmo(1);
-            if (this._playerTwo.ammoCount < 100)
-                this._playerTwo.reloadAmmo(1);
+            this._timer = setInterval(() => this.SpawnPowerUp(), 5000);
         }
         SpawnPowerUp() {
             if (this._powerUp)
@@ -175,7 +173,6 @@ var scenes;
             this._powerUp.graphics.x = Math.random() * 1420 + 500;
             this._powerUp.graphics.y = 0;
             this.addGameObject(this._powerUp);
-            console.log("Object spawnded");
         }
     }
     scenes.PlayScene = PlayScene;

@@ -32,7 +32,7 @@ module scenes {
             // Set the properities of the background 
             this._gameBackground = new objects.GameObject("background");
             this._gameBackground2 = new objects.GameObject("background_2");
-            this._gameBackground2.alpha = 0;
+            this._gameBackground2.SetAlpha(0);
 
             // Load the ground tilset
             this._groundTileset = new createjs.SpriteSheet({
@@ -117,10 +117,10 @@ module scenes {
         }
 
         public HandleEvents() : void {
-            if (!objects.Game.EventManager || !this._playerOne.isActive || !this._playerTwo.isActive)
+            if (!objects.Game.eventManager || !this._playerOne.isActive || !this._playerTwo.isActive)
                 return;
 
-            switch (objects.Game.EventManager.key)
+            switch (objects.Game.eventManager.key)
             {
                 // Player 1 keys
                 case "a": // move left
@@ -175,7 +175,13 @@ module scenes {
             else if (who == "Player2")
             {
                 this._score.incrementScore("Player1");
-            }    
+            }
+
+            let isGameEnded = this._score.winningPlayer;
+            if (isGameEnded[0]) {
+                objects.Game.currentSceneNumber = config.Scene.OVER;
+                objects.Game.winningPlayer = isGameEnded[1];
+            }
 
             this.ResetPLayers();
         }
@@ -202,16 +208,7 @@ module scenes {
                 this._playerTwo.isActive = true;
             });
 
-            this._timer = setInterval(() => this.SpawnPowerUp(), 10000);
-            this._timer = setInterval(() => this.SlowAmmoReload(), 1000);
-        }
-
-        public SlowAmmoReload() : void {
-            if (this._playerOne.ammoCount < 100)
-                    this._playerOne.reloadAmmo(1);
-                
-                if (this._playerTwo.ammoCount < 100)
-                    this._playerTwo.reloadAmmo(1);
+            this._timer = setInterval(() => this.SpawnPowerUp(), 5000);
         }
 
         public SpawnPowerUp() : void {
@@ -228,8 +225,6 @@ module scenes {
             this._powerUp.graphics.y = 0;
 
             this.addGameObject(this._powerUp);
-
-            console.log("Object spawnded");
         }
     }
 }

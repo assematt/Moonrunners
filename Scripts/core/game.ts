@@ -95,11 +95,11 @@
 
     function SetEvent(ev: KeyboardEvent)
     {
-        objects.Game.EventManager = ev;
+        objects.Game.eventManager = ev;
     }
     function ResetEvent()
     {
-        objects.Game.EventManager = null;
+        objects.Game.eventManager = null;
     }
 
     window.onload = Init;

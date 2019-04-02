@@ -77,10 +77,10 @@
         stage.addChild(objects.Game.currentScene);
     }
     function SetEvent(ev) {
-        objects.Game.EventManager = ev;
+        objects.Game.eventManager = ev;
     }
     function ResetEvent() {
-        objects.Game.EventManager = null;
+        objects.Game.eventManager = null;
     }
     window.onload = Init;
     window.onkeydown = SetEvent;

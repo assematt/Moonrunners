@@ -27,6 +27,24 @@ module objects {
             return this._scoresText;
         }
 
+        get playerOneScore() : number {
+            return this._scores[0];
+        }
+        get playerTwoScore() : number {
+            return this._scores[1];
+        }
+        get winningPlayer() : [boolean, string] {
+
+            if (this.playerOneScore === 10) {
+                return [true, "Player 1"];
+            }
+            else if (this.playerTwoScore === 10) {
+                return [true, "Player 2"];
+            }
+
+            return [false, ""];
+        }
+
         public incrementScore(who: "Player1" | "Player2") {
             switch (who) {
                 case "Player1":

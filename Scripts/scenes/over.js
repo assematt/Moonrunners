@@ -8,41 +8,42 @@ var scenes;
             this.Start();
         }
         // Private Methods
-        showClickToContinueLabel() {
-            createjs.Tween.get(this._continueLabel).to({ alpha: 1 }, 1500, createjs.Ease.getPowOut(1)).call(this._gameBackground.on, ["click", this.startGame, this]);
-            this._gameBackground.on("click", this.startGame, this);
+        enableClickToContinue() {
+            this._continueLabel.Animate({ alpha: 1 }, 1500, createjs.Ease.getPowOut(1)).call(() => {
+                this._gameBackground.On("click", this.restartGame, this);
+            });
         }
-        startGame() {
-            this._gameBackground.off("click", this.startGame);
-            createjs.Tween.get(this._titleLabel).to({ y: 50 }, 1500, createjs.Ease.getPowOut(1));
-            createjs.Tween.get(this._continueLabel).to({ alpha: 0 }, 500, createjs.Ease.getPowOut(1));
-            objects.Game.currentSceneNumber = config.Scene.PLAY;
+        restartGame() {
+            this._gameBackground.Off("click", this.restartGame);
+            this._continueLabel.Fade(0, 500, createjs.Ease.getPowOut(1));
+            this._winningPlayerText.Fade(0, 500, createjs.Ease.getPowOut(1)).call(() => {
+                objects.Game.currentSceneNumber = config.Scene.START;
+            });
         }
         // Public Methods
         Start() {
             // Set the properities of the background Title label
-            this._gameBackground = new createjs.Bitmap(this.assetManager.getResult("background"));
-            this.addChild(this._gameBackground);
+            this._gameBackground = new objects.GameObject("background");
             // cache the center of the screen position
             let screenCenter = this.GetCenter();
+            // Set the properities of the animated Title label            
+            this._winningPlayerText = new objects.GameObject(new objects.Label(`${objects.Game.winningPlayer} won!`, "40px", "Consolas", "#fff", screenCenter.x, screenCenter.y));
+            this._winningPlayerText.label.textAlign = "center";
+            this._winningPlayerText.SetAlpha(0);
+            this._winningPlayerText.SetScale(0.5);
             // Set the properities of the animated Title label
-            this._titleLabel = new objects.Label("Moonrunners", "80px", "Consolas", "#fff", screenCenter.x, screenCenter.y - 50);
-            this._titleLabel.setScale(0.5);
-            this._titleLabel.textAlign = "center";
-            this._titleLabel.alpha = 0;
-            this.addChild(this._titleLabel);
-            // Set the properities of the animated Title label
-            this._continueLabel = new objects.Label("Click anywhere to continue", "20px", "Consolas", "#fff", screenCenter.x, screenCenter.y + 50);
-            this._continueLabel.alpha = 0;
-            this._continueLabel.textAlign = "center";
-            this.addChild(this._continueLabel);
+            this._continueLabel = new objects.GameObject(new objects.Label("Click anywhere to continue", "20px", "Consolas", "#fff", screenCenter.x, screenCenter.y + 75));
+            this._continueLabel.label.textAlign = "center";
+            this._continueLabel.SetAlpha(0);
+            this.addGameObject(this._gameBackground);
+            this.addGameObject(this._winningPlayerText);
+            this.addGameObject(this._continueLabel);
             this.Main();
         }
         Update() {
         }
         Main() {
-            console.log("Main() in OverScene");
-            createjs.Tween.get(this._titleLabel).to({ alpha: 1, scaleX: 1, scaleY: 1 }, 2000, createjs.Ease.getPowOut(1)).call(this.showClickToContinueLabel, null, this);
+            this._winningPlayerText.Animate({ alpha: 1, scaleX: 1, scaleY: 1 }, 1500, createjs.Ease.getPowOut(1)).call(this.enableClickToContinue, null, this);
         }
     }
     scenes.OverScene = OverScene;

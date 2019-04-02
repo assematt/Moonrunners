@@ -4,6 +4,7 @@ module objects {
         public static assetManager: createjs.LoadQueue;
         public static currentSceneNumber: number;
         public static currentScene: objects.Scene;
-        public static EventManager : KeyboardEvent;
+        public static eventManager: KeyboardEvent;
+        public static winningPlayer: string;
     }
 }

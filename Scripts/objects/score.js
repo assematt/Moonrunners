@@ -19,6 +19,21 @@ var objects;
         get scores() {
             return this._scoresText;
         }
+        get playerOneScore() {
+            return this._scores[0];
+        }
+        get playerTwoScore() {
+            return this._scores[1];
+        }
+        get winningPlayer() {
+            if (this.playerOneScore === 10) {
+                return [true, "Player 1"];
+            }
+            else if (this.playerTwoScore === 10) {
+                return [true, "Player 2"];
+            }
+            return [false, ""];
+        }
         incrementScore(who) {
             switch (who) {
                 case "Player1":

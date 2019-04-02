@@ -14,9 +14,15 @@ The game ends when one player reaches 10 points.
 - [x] Basic play screen
 - [x] Basic game functionality *(player control, basic graphics)*
 - [x] Basic physics engine with collision detection
+- [x] Complex level geometry and collisions
+- [x] Game over message when a player gets 10 kills
 - [ ] Weapon system *(ammo.damage,etc.)*
 - [ ] Random weapon spawn
-- [ ] Complex level geometry and collisions
+- [ ] Collision remove tiles in between platforms Keep only floating platforms
+- [ ] Jump and move forward at the same time
+- [ ] Add 2 more levels to a total of 3 randomized when game starts (diff platofrms and diff backgrounds)
+- [ ] Less bullets maybe a rate of 1 bullet every 2 or 3 ticks and bigger bullets (maybe even less ammo)
+- [ ] add sounds
 
 ### Team composition
 * [Matteo Assenza](https://github.com/assematt): Manager - Programmer
