@@ -158,7 +158,14 @@ var scenes;
                 this._playerTwo.setGravity(9.81);
                 this._playerTwo.isActive = true;
             });
-            this._timer = setInterval(() => this.SpawnPowerUp(), 5000);
+            this._timer = setInterval(() => this.SpawnPowerUp(), 10000);
+            this._timer = setInterval(() => this.SlowAmmoReload(), 1000);
+        }
+        SlowAmmoReload() {
+            if (this._playerOne.ammoCount < 100)
+                this._playerOne.reloadAmmo(1);
+            if (this._playerTwo.ammoCount < 100)
+                this._playerTwo.reloadAmmo(1);
         }
         SpawnPowerUp() {
             if (this._powerUp)

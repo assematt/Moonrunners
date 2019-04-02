@@ -106,6 +106,10 @@ module objects {
         }
 
         public Move(direction: Direction) {
+
+            if (this.graphics.x < 160 || this.graphics.x > 1760)
+                return;
+
             switch (direction)
             {
                 case "Left": {

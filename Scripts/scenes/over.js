@@ -15,8 +15,9 @@ var scenes;
         }
         restartGame() {
             this._gameBackground.Off("click", this.restartGame);
-            this._continueLabel.Fade(0, 500, createjs.Ease.getPowOut(1));
-            this._winningPlayerText.Fade(0, 500, createjs.Ease.getPowOut(1)).call(() => {
+            this._gameBackground.Fade(0, 1000, createjs.Ease.getPowOut(1));
+            this._continueLabel.Fade(0, 1000, createjs.Ease.getPowOut(1));
+            this._winningPlayerText.Fade(0, 1000, createjs.Ease.getPowOut(1)).call(() => {
                 objects.Game.currentSceneNumber = config.Scene.START;
             });
         }
@@ -44,6 +45,9 @@ var scenes;
             }
             this._continueLabel.label.textAlign = "center";
             this._continueLabel.SetAlpha(0);
+            // Background for next screen
+            this._gameBackgroundNext = new objects.GameObject(`background_${objects.Game.currentLevel}`);
+            this.addGameObject(this._gameBackgroundNext);
             this.addGameObject(this._gameBackground);
             this.addGameObject(this._gameBackground2);
             this.addGameObject(this._winningPlayerText);
