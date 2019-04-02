@@ -137,10 +137,11 @@ var objects;
             this._healthSprites[2].gotoAndStop(this.name);
         }
         onKilled() {
+            objects.Game.currentScene.OnPlayerDeath(this.name);
             // Play an animation when the player dies
             createjs.Tween.get(this.graphics, { onComplete: () => {
                     // Notify the Play scene this player died one all the animation are finished
-                    objects.Game.currentScene.OnPlayerDeath(this.name);
+                    objects.Game.currentScene.ResetPlayers();
                 } }).to({ alpha: 1 }, 50).to({ alpha: 0 }, 50).loop = 10;
         }
         onCharacterCollision(other) {

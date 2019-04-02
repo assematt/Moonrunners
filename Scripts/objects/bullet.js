@@ -25,19 +25,7 @@ var objects;
             this.Offset((this.direction === "right" ? 1 : -1) * this.speed, 0);
         }
         OnBulletCollision(other) {
-            switch (other.tag) {
-                case "Bullet":
-                    {
-                        this.Destroy();
-                        other.Destroy();
-                    }
-                    break;
-                case "Player":
-                    {
-                        this.Destroy();
-                    }
-                    break;
-            }
+            this.Destroy();
         }
     }
     objects.Bullet = Bullet;

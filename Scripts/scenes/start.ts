@@ -34,7 +34,7 @@ module scenes {
         // Public Methods
         public Start() : void {
             // Set the properities of the background Title label
-            this._gameBackground = new objects.GameObject("background");
+            this._gameBackground = new objects.GameObject(`background_${objects.Game.currentLevel}`);
             this.addGameObject(this._gameBackground);
 
             // cache the center of the screen position

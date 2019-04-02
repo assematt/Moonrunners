@@ -12,8 +12,8 @@ var scenes;
             // cache the center of the screen position
             let screenCenter = this.GetCenter();
             // Set the properities of the background 
-            this._gameBackground = new objects.GameObject("background");
-            this._gameBackground2 = new objects.GameObject("background_2");
+            this._gameBackground = new objects.GameObject(`background_${objects.Game.currentLevel}`);
+            this._gameBackground2 = new objects.GameObject(`background_${objects.Game.currentLevel}_alternate`);
             this._gameBackground2.SetAlpha(0);
             // Load the ground tilset
             this._groundTileset = new createjs.SpriteSheet({
@@ -26,12 +26,12 @@ var scenes;
             this._level.LoadMap("", this._groundTileset);
             // Set the properities of the playerOne 
             this._playerOne = new objects.Characters("player1");
-            this._playerOne.SetPosition(this.width / 2 - 50, this.height / 2);
+            this._playerOne.SetPosition(this.width / 2 - 470, this.height / 2 + 100);
             this._playerOne.SetAlpha(0);
             this._playerOne.name = "Player1";
             // Set the properities of the playerTwo 
             this._playerTwo = new objects.Characters("player2");
-            this._playerTwo.SetPosition(this.width / 2 + 50, this.height / 2);
+            this._playerTwo.SetPosition(this.width / 2 + 470, this.height / 2 + 100);
             this._playerTwo.SetAlpha(0);
             this._playerTwo.name = "Player2";
             // Load the health tileset
@@ -124,9 +124,14 @@ var scenes;
                     break;
             }
         }
-        ResetPLayers() {
-            this._playerOne.Reset(this.width / 2 - 50, this.height / 2);
-            this._playerTwo.Reset(this.width / 2 + 50, this.height / 2);
+        ResetPlayers() {
+            let isGameEnded = this._score.winningPlayer;
+            if (isGameEnded[0]) {
+                objects.Game.currentSceneNumber = config.Scene.OVER;
+                objects.Game.winningPlayer = isGameEnded[1];
+            }
+            this._playerOne.Reset(this.width / 2 - 470, this.height / 2 + 100);
+            this._playerTwo.Reset(this.width / 2 + 470, this.height / 2 + 100);
         }
         OnPlayerDeath(who) {
             if (who == "Player1") {
@@ -135,12 +140,6 @@ var scenes;
             else if (who == "Player2") {
                 this._score.incrementScore("Player1");
             }
-            let isGameEnded = this._score.winningPlayer;
-            if (isGameEnded[0]) {
-                objects.Game.currentSceneNumber = config.Scene.OVER;
-                objects.Game.winningPlayer = isGameEnded[1];
-            }
-            this.ResetPLayers();
         }
         Update() {
             this.HandleEvents();

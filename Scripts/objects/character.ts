@@ -169,11 +169,13 @@ module objects {
         }
 
         public onKilled() {
+            (Game.currentScene as scenes.PlayScene).OnPlayerDeath(this.name);
+
             // Play an animation when the player dies
             createjs.Tween.get(this.graphics, {onComplete: () => {
-               
                 // Notify the Play scene this player died one all the animation are finished
-                (Game.currentScene as scenes.PlayScene).OnPlayerDeath(this.name);
+                (Game.currentScene as scenes.PlayScene).ResetPlayers();
+               
             }}).to({alpha:1}, 50).to({alpha:0}, 50).loop = 10;
         }
 

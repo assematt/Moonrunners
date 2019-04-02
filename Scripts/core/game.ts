@@ -17,8 +17,12 @@
     // Load assets
     assetManifest = [
         {id: "logo", src:"./Assets/images/logo.png"},
-        {id: "background", src:"./Assets/images/bg.jpg"},
-        {id: "background_2", src:"./Assets/images/bg_2.jpg"},
+        {id: "background_1", src:"./Assets/images/bg_1.png"},
+        {id: "background_1_alternate", src:"./Assets/images/bg_1_alternate.png"},
+        {id: "background_2", src:"./Assets/images/bg_2.png"},
+        {id: "background_2_alternate", src:"./Assets/images/bg_2_alternate.png"},
+        {id: "background_3", src:"./Assets/images/bg_3.png"},
+        {id: "background_3_alternate", src:"./Assets/images/bg_3_alternate.png"},
         {id: "level", src:"./Assets/images/level.png"},
         {id: "floor", src:"./Assets/images/floor.png"},
         {id: "player1", src:"./Assets/images/player1.png"},
@@ -42,6 +46,7 @@
 
         // Set the static properties
         objects.Game.assetManager = assetManager;
+        objects.Game.currentLevel = 1;
     }
 
     // Setup the game objects

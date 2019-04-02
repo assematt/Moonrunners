@@ -2,6 +2,7 @@ module scenes {
     export class OverScene extends objects.Scene {
         // Instance variables
         private _gameBackground : objects.GameObject;
+        private _gameBackground2 : objects.GameObject;
         private _winningPlayerText: objects.GameObject;
         private _continueLabel : objects.GameObject;
 
@@ -32,7 +33,11 @@ module scenes {
         // Public Methods
         public Start() : void {
             // Set the properities of the background Title label
-            this._gameBackground = new objects.GameObject("background");
+            this._gameBackground = new objects.GameObject(`background_${objects.Game.currentLevel}`);
+            this._gameBackground2 = new objects.GameObject(`background_${objects.Game.currentLevel}_alternate`);
+
+            // Move to the next level
+            ++objects.Game.currentLevel;
 
             // cache the center of the screen position
             let screenCenter = this.GetCenter();
@@ -44,13 +49,22 @@ module scenes {
             this._winningPlayerText.SetScale(0.5);
 
             // Set the properities of the animated Title label
-            this._continueLabel = new objects.GameObject(new objects.Label("Click anywhere to continue", "20px", "Consolas", "#fff", screenCenter.x, screenCenter.y + 75));
+            if (objects.Game.currentLevel === 4) {
+                objects.Game.currentLevel = 1;
+                this._continueLabel = new objects.GameObject(new objects.Label(`Game is over! Click anywhere to restart`, "20px", "Consolas", "#fff", screenCenter.x, screenCenter.y + 75));
+            }
+            else {
+                this._continueLabel = new objects.GameObject(new objects.Label(`Click anywhere to continue to level ${objects.Game.currentLevel}`, "20px", "Consolas", "#fff", screenCenter.x, screenCenter.y + 75));   
+            }
             this._continueLabel.label.textAlign = "center";
             this._continueLabel.SetAlpha(0);
 
             this.addGameObject(this._gameBackground);
+            this.addGameObject(this._gameBackground2);
             this.addGameObject(this._winningPlayerText);
             this.addGameObject(this._continueLabel);
+
+            this.Zoom(1.15);
 
             this.Main();
         }
@@ -59,6 +73,9 @@ module scenes {
         }
 
         public Main() : void {
+            this.Zoom(1, 1500);
+            this._gameBackground2.Fade(0, 1500, createjs.Ease.getPowOut(1));
+
             this._winningPlayerText.Animate({alpha:1, scaleX: 1, scaleY: 1}, 1500, createjs.Ease.getPowOut(1)).call(this.enableClickToContinue, null, this);
         }
     }

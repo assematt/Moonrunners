@@ -35,19 +35,7 @@ module objects {
 
         public OnBulletCollision(other: GameObject) {
 
-            switch (other.tag)
-            {
-                case "Bullet":
-                {
-                    this.Destroy();
-                    other.Destroy();
-                } break;
-
-                case "Player":
-                {
-                    this.Destroy();
-                } break;
-            }
+            this.Destroy();
         }
     }
 }
