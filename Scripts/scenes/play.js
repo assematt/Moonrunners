@@ -85,44 +85,70 @@ var scenes;
         HandleEvents() {
             if (!objects.Game.eventManager || !this._playerOne.isActive || !this._playerTwo.isActive)
                 return;
-            switch (objects.Game.eventManager.key) {
+            if (objects.Game.eventManager.key == "a")
+                this._playerOne.Move("Left");
+            if (objects.Game.eventManager.key == "d")
+                this._playerOne.Move("Right");
+            if (objects.Game.eventManager.key == "w")
+                this._playerOne.Jump(); //JUMP
+            if (objects.Game.eventManager.key == " ") { //SHOOT
+                let bullet = this._playerOne.Shoot();
+                if (bullet) {
+                    this.addGameObject(this._playerOne.Shoot());
+                }
+            }
+            if (objects.Game.eventManager.key == "ArrowLeft")
+                this._playerTwo.Move("Left");
+            if (objects.Game.eventManager.key == "ArrowRight")
+                this._playerTwo.Move("Right");
+            if (objects.Game.eventManager.key == "ArrowUp")
+                this._playerTwo.Jump(); //JUMP
+            if (objects.Game.eventManager.key == "0") { //SHOOT
+                let bullet = this._playerTwo.Shoot();
+                if (bullet) {
+                    this.addGameObject(this._playerTwo.Shoot());
+                }
+            }
+            /* switch (objects.Game.eventManager.key)
+            {
                 // Player 1 keys
                 case "a": // move left
-                    this._playerOne.Move("Left");
-                    break;
+                this._playerOne.Move("Left");
+                break;
                 case "d": // move right
-                    this._playerOne.Move("Right");
-                    break;
+                this._playerOne.Move("Right");
+                break;
                 case "q": // shoot
-                    {
-                        let bullet = this._playerOne.Shoot();
-                        if (bullet) {
-                            this.addGameObject(this._playerOne.Shoot());
-                        }
+                {
+                    let bullet = this._playerOne.Shoot();
+                    if (bullet) {
+                        this.addGameObject(this._playerOne.Shoot());
                     }
-                    break;
+                }
+                break;
                 case " ": // jump
-                    this._playerOne.Jump();
-                    break;
+                this._playerOne.Jump();
+                break;
+
                 // Player 2 keys
                 case "ArrowLeft": // move left
-                    this._playerTwo.Move("Left");
-                    break;
+                this._playerTwo.Move("Left");
+                break;
                 case "ArrowRight": // move right
-                    this._playerTwo.Move("Right");
-                    break;
+                this._playerTwo.Move("Right");
+                break;
                 case "1": // shoot
-                    {
-                        let bullet = this._playerTwo.Shoot();
-                        if (bullet) {
-                            this.addGameObject(bullet);
-                        }
+                {
+                    let bullet = this._playerTwo.Shoot();
+                    if (bullet) {
+                        this.addGameObject(bullet);
                     }
-                    break;
+                }
+                break;
                 case "0": // jump
-                    this._playerTwo.Jump();
-                    break;
-            }
+                this._playerTwo.Jump();
+                break;
+            } */
         }
         ResetPlayers() {
             let isGameEnded = this._score.winningPlayer;

@@ -118,7 +118,33 @@ module scenes {
             if (!objects.Game.eventManager || !this._playerOne.isActive || !this._playerTwo.isActive)
                 return;
 
-            switch (objects.Game.eventManager.key)
+            if (objects.Game.eventManager.key == "a") this._playerOne.Move("Left");
+
+            if (objects.Game.eventManager.key == "d")  this._playerOne.Move("Right");
+
+            if (objects.Game.eventManager.key == "w") this._playerOne.Jump(); //JUMP
+
+            if (objects.Game.eventManager.key == " ") { //SHOOT
+                let bullet = this._playerOne.Shoot();
+                if (bullet) {
+                    this.addGameObject(this._playerOne.Shoot());
+                } 
+            }
+
+            if (objects.Game.eventManager.key == "ArrowLeft") this._playerTwo.Move("Left");
+
+            if (objects.Game.eventManager.key == "ArrowRight")  this._playerTwo.Move("Right");
+
+            if (objects.Game.eventManager.key == "ArrowUp") this._playerTwo.Jump(); //JUMP
+
+            if (objects.Game.eventManager.key == "0") { //SHOOT
+                let bullet = this._playerTwo.Shoot();
+                if (bullet) {
+                    this.addGameObject(this._playerTwo.Shoot());
+                } 
+            }
+
+            /* switch (objects.Game.eventManager.key)
             {
                 // Player 1 keys
                 case "a": // move left
@@ -157,7 +183,7 @@ module scenes {
                 case "0": // jump
                 this._playerTwo.Jump();
                 break;
-            }
+            } */
         }
 
         public ResetPlayers() {

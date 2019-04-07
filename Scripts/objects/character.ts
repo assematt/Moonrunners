@@ -11,6 +11,8 @@ module objects {
         private _playerHealth: number;
         private _healthSprites: Array<createjs.Sprite>;
         private _ammoCount = 100;
+        private _shootSpeed = 10;
+        private _shootTimer = 0;
 
         private _UpdateHealthSprites() {
 
@@ -93,15 +95,24 @@ module objects {
             return this._gravity;
         }
         public Shoot() : objects.Bullet | null {
-            if (this._ammoCount-- > 0) {
-                // Spawn a bullet object
-                let Bullet = new objects.Bullet("bullet", this.GetId(), this.graphics.scaleX < 0 ? "left" : "right" );
-                Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -40 : 33), this.graphics.y + 24);
-                return Bullet;
-            } else if (this._ammoCount < 0) {
-                this._ammoCount = 0;
+            if (this._shootTimer == 0) {
+                if (this._ammoCount > 0) {
+                    // Spawn a bullet object
+                    let Bullet = new objects.Bullet(200, 3.0, "bullet", this.GetId(), this.graphics.scaleX < 0 ? "left" : "right" );
+                    Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -40 : 33), this.graphics.y + 24);
+                    this._ammoCount--;
+                    this._shootTimer = this._shootSpeed;
+                    return Bullet;
+                }
+            } else {
+                this._shootTimer -= 1;
             }
-            
+
+            //make sure ammo doesn't go negative
+            if (this._ammoCount < 0) {
+                this._ammoCount = 0; 
+            }
+ 
             return null;
         }
 
@@ -193,7 +204,7 @@ module objects {
 
                 // If we collide with a bullet shot by the other player
                 case "Bullet": {
-                    if ((<Bullet>other).getOwner() != this.id && this._playerHealth > 0)
+                    if ((<Bullet>other).getOwner() != this.GetId() && this._playerHealth > 0)
                     {
                         // decrease the player health
                         if (--this._playerHealth <= 0)

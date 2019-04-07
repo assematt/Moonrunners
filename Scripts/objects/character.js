@@ -5,6 +5,8 @@ var objects;
         constructor(assetID, isCentered) {
             super(assetID, isCentered);
             this._ammoCount = 100;
+            this._shootSpeed = 10;
+            this._shootTimer = 0;
             this._gravity = 0;
             this._jumpForce = 0;
             this._isFalling = true;
@@ -69,13 +71,21 @@ var objects;
             return this._gravity;
         }
         Shoot() {
-            if (this._ammoCount-- > 0) {
-                // Spawn a bullet object
-                let Bullet = new objects.Bullet("bullet", this.GetId(), this.graphics.scaleX < 0 ? "left" : "right");
-                Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -40 : 33), this.graphics.y + 24);
-                return Bullet;
+            if (this._shootTimer == 0) {
+                if (this._ammoCount > 0) {
+                    // Spawn a bullet object
+                    let Bullet = new objects.Bullet(200, 3.0, "bullet", this.GetId(), this.graphics.scaleX < 0 ? "left" : "right");
+                    Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -40 : 33), this.graphics.y + 24);
+                    this._ammoCount--;
+                    this._shootTimer = this._shootSpeed;
+                    return Bullet;
+                }
             }
-            else if (this._ammoCount < 0) {
+            else {
+                this._shootTimer -= 1;
+            }
+            //make sure ammo doesn't go negative
+            if (this._ammoCount < 0) {
                 this._ammoCount = 0;
             }
             return null;
@@ -155,7 +165,7 @@ var objects;
                 // If we collide with a bullet shot by the other player
                 case "Bullet":
                     {
-                        if (other.getOwner() != this.id && this._playerHealth > 0) {
+                        if (other.getOwner() != this.GetId() && this._playerHealth > 0) {
                             // decrease the player health
                             if (--this._playerHealth <= 0) {
                                 // If we reach -1 then we are dead
