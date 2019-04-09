@@ -1,13 +1,15 @@
 var objects;
 (function (objects) {
     class Bullet extends objects.GameObject {
-        constructor(lifetime, speed, assetID, ownerId, direction, isCentered) {
+        constructor(assetID, ownerId, direction, isCentered) {
             super(assetID, isCentered);
             this.ownerId = ownerId;
             this.direction = direction;
+            if (direction == "left")
+                this.SetScale([-this.graphics.scaleX, this.graphics.scaleY]);
             this.hasCollisions = true;
-            this.speed = speed;
-            this.lifetime = lifetime;
+            this.speed = 4;
+            this.lifetime = 600;
             this.tag = "Bullet";
             this.name = `bullet_${this.GetId()}`;
             this.onCollision = this.OnBulletCollision;
@@ -24,13 +26,14 @@ var objects;
         Update() {
             super.Update();
             this.Offset((this.direction === "right" ? 1 : -1) * this.speed, 0);
-            if (this.lifetime == 0) {
+            if (this.lifetime > 0)
+                this.lifetime -= 1;
+            else {
                 this.Destroy();
             }
-            this.lifetime--;
         }
         OnBulletCollision(other) {
-            if (other.GetId() != this.getOwner()) {
+            if (other.GetId() != this.getOwner() && other.tag != "Bullet") {
                 this.Destroy();
             }
         }

@@ -118,72 +118,33 @@ module scenes {
             if (!objects.Game.eventManager || !this._playerOne.isActive || !this._playerTwo.isActive)
                 return;
 
-            if (objects.Game.eventManager.key == "a") this._playerOne.Move("Left");
+            if (objects.Game.eventManager.key == "a") {
+                this._playerOne.Move("Left");
+            }
+            else if (objects.Game.eventManager.key == "d")  {
+                this._playerOne.Move("Right");
+            }
 
-            if (objects.Game.eventManager.key == "d")  this._playerOne.Move("Right");
-
-            if (objects.Game.eventManager.key == "w") this._playerOne.Jump(); //JUMP
+            if (objects.Game.eventManager.key == "w" && this._playerOne._isJumping == false && this._playerOne._isFalling == false) this._playerOne.Jump(); //JUMP
 
             if (objects.Game.eventManager.key == " ") { //SHOOT
                 let bullet = this._playerOne.Shoot();
                 if (bullet) {
-                    this.addGameObject(this._playerOne.Shoot());
-                } 
+                    this.addGameObject(bullet);
+                }
             }
 
             if (objects.Game.eventManager.key == "ArrowLeft") this._playerTwo.Move("Left");
+            else if (objects.Game.eventManager.key == "ArrowRight")  this._playerTwo.Move("Right");
 
-            if (objects.Game.eventManager.key == "ArrowRight")  this._playerTwo.Move("Right");
-
-            if (objects.Game.eventManager.key == "ArrowUp") this._playerTwo.Jump(); //JUMP
+            if (objects.Game.eventManager.key == "ArrowUp"  && this._playerTwo._isJumping == false && this._playerTwo._isFalling == false) this._playerTwo.Jump(); //JUMP
 
             if (objects.Game.eventManager.key == "0") { //SHOOT
                 let bullet = this._playerTwo.Shoot();
                 if (bullet) {
-                    this.addGameObject(this._playerTwo.Shoot());
+                    this.addGameObject(bullet);
                 } 
             }
-
-            /* switch (objects.Game.eventManager.key)
-            {
-                // Player 1 keys
-                case "a": // move left
-                this._playerOne.Move("Left");
-                break;
-                case "d": // move right
-                this._playerOne.Move("Right");
-                break;
-                case "q": // shoot
-                {
-                    let bullet = this._playerOne.Shoot();
-                    if (bullet) {
-                        this.addGameObject(this._playerOne.Shoot());
-                    }
-                }                
-                break;
-                case " ": // jump
-                this._playerOne.Jump();
-                break;
-
-                // Player 2 keys
-                case "ArrowLeft": // move left
-                this._playerTwo.Move("Left");
-                break;
-                case "ArrowRight": // move right
-                this._playerTwo.Move("Right");
-                break;
-                case "1": // shoot
-                {
-                    let bullet = this._playerTwo.Shoot();
-                    if (bullet) {
-                        this.addGameObject(bullet);
-                    }
-                }
-                break;
-                case "0": // jump
-                this._playerTwo.Jump();
-                break;
-            } */
         }
 
         public ResetPlayers() {
@@ -235,10 +196,10 @@ module scenes {
         }
 
         public SlowAmmoReload() : void {
-            if (this._playerOne.ammoCount < 100)
+            if (this._playerOne.ammoCount < 20)
                     this._playerOne.reloadAmmo(1);
 
-                if (this._playerTwo.ammoCount < 100)
+                if (this._playerTwo.ammoCount < 20)
                     this._playerTwo.reloadAmmo(1);
         }
 

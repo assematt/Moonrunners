@@ -6,13 +6,16 @@ module objects {
 
         // Private properties        
         private _gravity: number;
-        private _jumpForce: number;
-        private _isFalling: boolean;
+        private _jumpTimer: number;
+        public _isFalling: boolean;
+        public _isJumping : boolean;
         private _playerHealth: number;
         private _healthSprites: Array<createjs.Sprite>;
-        private _ammoCount = 100;
-        private _shootSpeed = 10;
+        private _ammoCount = 20;
         private _shootTimer = 0;
+
+        private _x = 0;
+        private _y = 0;
 
         private _UpdateHealthSprites() {
 
@@ -75,12 +78,15 @@ module objects {
         {
             super(assetID, isCentered);
             this._gravity = 0;
-            this._jumpForce = 0;
+            this._jumpTimer = 0;
             this._isFalling = true;
+            this._isJumping = false;
             this._playerHealth = 6;
             this.hasCollisions = true;
             this.tag = "Player";
             this.onCollision = this.onCharacterCollision;
+            this._x = 0;
+            this._y = 0;
         }
 
         public SetHealhtSprite(sprites: Array<createjs.Sprite>) {
@@ -94,26 +100,25 @@ module objects {
         public GetGravity() : number {
             return this._gravity;
         }
+
         public Shoot() : objects.Bullet | null {
-            if (this._shootTimer == 0) {
-                if (this._ammoCount > 0) {
-                    // Spawn a bullet object
-                    let Bullet = new objects.Bullet(200, 3.0, "bullet", this.GetId(), this.graphics.scaleX < 0 ? "left" : "right" );
-                    Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -40 : 33), this.graphics.y + 24);
-                    this._ammoCount--;
-                    this._shootTimer = this._shootSpeed;
-                    return Bullet;
+            let Bullet = null;
+            if (this._shootTimer == 0 && this._ammoCount > 0) {
+                // Spawn a bullet object
+                Bullet = new objects.Bullet("bullet", this.GetId(), this.graphics.scaleX < 0 ? "left" : "right" );
+                Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -40 : 33), this.graphics.y + 24);
+                if (Bullet) {
+                    this._ammoCount -= 1;
+                    this._shootTimer = 20;
                 }
-            } else {
-                this._shootTimer -= 1;
-            }
+            } 
 
             //make sure ammo doesn't go negative
             if (this._ammoCount < 0) {
-                this._ammoCount = 0; 
+                this._ammoCount = 0;
             }
- 
-            return null;
+            
+           return Bullet;
         }
 
         public Move(direction: Direction) {
@@ -124,12 +129,12 @@ module objects {
             switch (direction)
             {
                 case "Left": {
-                    this.Offset(-5, 0);
+                    this._x = -4;
                     if (this.graphics.scaleX > 0)
                         this.SetScale([-this.graphics.scaleX, this.graphics.scaleY]);
                 } break;
                 case "Right":{
-                    this.Offset(5, 0);
+                    this._x = 4;
                     if (this.graphics.scaleX < 0)
                     {
                         this.SetScale([-this.graphics.scaleX, this.graphics.scaleY]);
@@ -137,21 +142,40 @@ module objects {
                 } break;
             }
 
-            this._isFalling = true;
-        }
-
-        public Jump() : void {
-            if (this.graphics.y > 75) {
-                this._jumpForce = -4;
-                this.Offset(0, -20);
+            if (this._isJumping == false) {
                 this._isFalling = true;
             }
         }
 
+        public Jump() : void {
+            if (this.graphics.y > 75 && this._isFalling == false) {
+                this._y = -4;
+                this._jumpTimer = 60;
+                this._isJumping = true;
+            } 
+        }
+
         public Update() : void {
             super.Update();
-            if (this._isFalling)
-                this.Offset(0, (this._gravity * 1) + this._jumpForce);
+
+            if (this._shootTimer > 0) this._shootTimer -= 1;
+
+            if (this._isFalling) {
+                this.Offset(this._x, this._y + (this._gravity * 0.5));
+            } else {
+                this.Offset(this._x, this._y);
+            }
+
+            this._x = 0;
+
+            if (this._jumpTimer > 0) {
+                this._jumpTimer -= 1;
+            }
+            else if (this._isJumping == true) {
+                this._y = 0;
+                this._isJumping = false;
+                this._isFalling = true;
+            } 
         }
 
         public TakeDamage(amount?: number) {
@@ -171,11 +195,11 @@ module objects {
         public Reset(x: number, y: number) {
             this.SetPosition(x, y);
             this.SetAlpha(1);
-            this._jumpForce = 0;
+            this._jumpTimer = 0;
             this._isFalling = true;
             this._playerHealth = 6;
             this.hasCollisions = true;
-            this._ammoCount = 100;
+            this._ammoCount = 20;
 
             // Reset the health sprites
             this._healthSprites[0].gotoAndStop(this.name);
@@ -197,7 +221,7 @@ module objects {
         public onCharacterCollision(other: GameObject) {
             switch (other.tag)
             {
-                // If we collide with the floor we stop falling
+                //If we collide with the floor we stop falling
                 case "Floor": 
                     this._isFalling = false;
                 break;
@@ -224,11 +248,11 @@ module objects {
             return this._ammoCount;
         }
         public reloadAmmo(value: number) {
-            if ((value + this._ammoCount) <= 100) {
+            if ((value + this._ammoCount) <= 20) {
                 this._ammoCount += value;
             }
             else {
-                this._ammoCount = 100;
+                this._ammoCount = 20;
             }
         }
     }
