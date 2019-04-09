@@ -40,7 +40,7 @@ var scenes;
             this._continueLabel.label.textAlign = "center";
             this.addGameObject(this._continueLabel);
             // Set the properities of the animated Title label
-            this._instructions = new objects.GameObject(new objects.Label("Player1: 'a'/'d' to move, 'spacebar' to jump, 'q' to shoot\n\nPlayer2: 'left'/'right' to move, 'num0' to jump, 'num1' to shoot", "18px", "Consolas", "#fff", screenCenter.x, screenCenter.y + 100));
+            this._instructions = new objects.GameObject(new objects.Label("Player1: 'a'/'d' to move, 'w' to jump, 'space' to shoot\n\nPlayer2: 'left'/'right' to move, 'up' to jump, 'num0' to shoot", "18px", "Consolas", "#fff", screenCenter.x, screenCenter.y + 100));
             this._instructions.SetAlpha(0);
             this._instructions.label.textAlign = "center";
             this.addGameObject(this._instructions);

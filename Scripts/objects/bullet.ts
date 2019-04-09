@@ -12,7 +12,7 @@ module objects {
             this.direction = direction;
             if (direction == "left") this.SetScale([-this.graphics.scaleX, this.graphics.scaleY]);
             this.hasCollisions = true;
-            this.speed = 4;
+            this.speed = 8;
             this.lifetime = 600;
             this.tag = "Bullet";
             this.name = `bullet_${this.GetId()}`;

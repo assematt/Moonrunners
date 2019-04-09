@@ -17,15 +17,15 @@ The game ends when one player reaches 10 points.
 - [x] Complex level geometry and collisions
 - [x] Game over message when a player gets 10 kills
 - [x] Add 2 more levels to a total of 3 randomized when game starts (diff platofrms and diff backgrounds)
+- [X] Collision remove tiles in between platforms Keep only floating platforms
+- [X] Jump and move forward at the same time
+- [X] Less bullets maybe a rate of 1 bullet every 2 or 3 ticks and bigger bullets (maybe even less ammo)
+- [X] add sounds
 - [ ] Weapon system *(ammo.damage,etc.)*
 - [ ] Random weapon spawn
-- [ ] Collision remove tiles in between platforms Keep only floating platforms
-- [ ] Jump and move forward at the same time
-- [ ] Less bullets maybe a rate of 1 bullet every 2 or 3 ticks and bigger bullets (maybe even less ammo)
-- [ ] add sounds
 
 ### Team composition
 * [Matteo Assenza](https://github.com/assematt): Manager - Programmer
 * [Filip Anton](https://github.com/CarlGustavAlbertDwarfsteinYung): Game Design - Artist
-* [Jelani Garnes](https://github.com/Jelanigarnes): Artist
+* [Jelani Garnes](https://github.com/Jelanigarnes): Artist - Sound
 

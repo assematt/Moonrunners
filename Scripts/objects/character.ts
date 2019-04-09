@@ -109,7 +109,7 @@ module objects {
                 Bullet.SetPosition(this.graphics.x + (this.graphics.scaleX < 0 ? -40 : 33), this.graphics.y + 24);
                 if (Bullet) {
                     this._ammoCount -= 1;
-                    this._shootTimer = 20;
+                    this._shootTimer = 5;
                 }
             } 
 
@@ -148,7 +148,7 @@ module objects {
         }
 
         public Jump() : void {
-            if (this.graphics.y > 75 && this._isFalling == false) {
+            if (this._isFalling == false) {
                 this._y = -4;
                 this._jumpTimer = 60;
                 this._isJumping = true;
@@ -163,7 +163,16 @@ module objects {
             if (this._isFalling) {
                 this.Offset(this._x, this._y + (this._gravity * 0.5));
             } else {
-                this.Offset(this._x, this._y);
+                if (this.graphics.y > 75)
+                {
+                    this.Offset(this._x, this._y);
+                }
+                else
+                {
+                    this._y = 0;
+                    this._isJumping = false;
+                    this._isFalling = true;
+                }    
             }
 
             this._x = 0;
@@ -230,11 +239,15 @@ module objects {
                 case "Bullet": {
                     if ((<Bullet>other).getOwner() != this.GetId() && this._playerHealth > 0)
                     {
+                        createjs.Sound.play("player_hit");
+
                         // decrease the player health
                         if (--this._playerHealth <= 0)
                         {
                             // If we reach -1 then we are dead
-                            this.onKilled();                            
+                            this.onKilled();       
+                            
+                            createjs.Sound.play("defeated");
                         }
                         
                         // Change the health bar

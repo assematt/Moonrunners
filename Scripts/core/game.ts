@@ -16,6 +16,7 @@
 
     // Load assets
     assetManifest = [
+        // Sprites
         {id: "logo", src:"./Assets/images/logo.png"},
         {id: "background_1", src:"./Assets/images/bg_1.png"},
         {id: "background_1_alternate", src:"./Assets/images/bg_1_alternate.png"},
@@ -32,7 +33,17 @@
         {id: "tileset", src:"./Assets/images/tiles.png"},
         {id: "ammo_box", src:"./Assets/images/ammo_box.png"},
         {id: "powerup", src:"./Assets/images/powerup.png"},
-        {id: "powerup_health", src:"./Assets/images/powerup_health.png"}
+        {id: "powerup_health", src:"./Assets/images/powerup_health.png"},
+
+        // Sounds
+        {id: "background_music", src:"./Assets/sounds/Background_Music.mp3"},
+        {id: "ammo_pickup", src:"./Assets/sounds/AmmoPickUp.wav"},
+        {id: "defeated", src:"./Assets/sounds/Defeated.wav"},
+        {id: "health_pick_up", src:"./Assets/sounds/HealthPickUp.wav"},
+        {id: "jump", src:"./Assets/sounds/Jump.wav"},
+        {id: "level_switch", src:"./Assets/sounds/LevelSwitch.wav"},
+        {id: "player_hit", src:"./Assets/sounds/PlayerHit.wav"},
+        {id: "weapon_fire", src:"./Assets/sounds/WeaponFire.wav"},
     ]
 
     // Preload the required assets
@@ -78,12 +89,14 @@
     }
     function Main() : void {
 
+        createjs.Sound.play("background_music").loop = 100;
+
         // Reset the scene
         stage.removeAllChildren();
 
         switch (objects.Game.currentSceneNumber) {
             // When we load the start scene
-            case config.Scene.START:            
+            case config.Scene.START:
             objects.Game.currentScene = new scenes.StartScene(displayWidth, displayHeight);            
             break;
             case config.Scene.PLAY:
@@ -91,6 +104,7 @@
             break;
             case config.Scene.OVER:
             objects.Game.currentScene = new scenes.OverScene(displayWidth, displayHeight);
+            createjs.Sound.play("level_switch");
             break;
         }
 

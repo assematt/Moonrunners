@@ -28,11 +28,13 @@ var objects;
                     switch (this._type) {
                         case "Ammo":
                             player.reloadAmmo(10);
+                            createjs.Sound.play("ammo_pickup");
                             break;
                         case "Gun":
                             break;
                         case "Health":
                             player.Heal();
+                            createjs.Sound.play("health_pick_up");
                             break;
                     }
                     objects.Game.currentScene.removeGameObject(this);

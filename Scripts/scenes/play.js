@@ -91,11 +91,15 @@ var scenes;
             else if (objects.Game.eventManager.key == "d") {
                 this._playerOne.Move("Right");
             }
-            if (objects.Game.eventManager.key == "w" && this._playerOne._isJumping == false && this._playerOne._isFalling == false)
-                this._playerOne.Jump(); //JUMP
+            //JUMP
+            if (objects.Game.eventManager.key == "w" && this._playerOne._isJumping == false && this._playerOne._isFalling == false) {
+                this._playerOne.Jump();
+                createjs.Sound.play("jump");
+            }
             if (objects.Game.eventManager.key == " ") { //SHOOT
                 let bullet = this._playerOne.Shoot();
                 if (bullet) {
+                    createjs.Sound.play("weapon_fire");
                     this.addGameObject(bullet);
                 }
             }
@@ -103,11 +107,15 @@ var scenes;
                 this._playerTwo.Move("Left");
             else if (objects.Game.eventManager.key == "ArrowRight")
                 this._playerTwo.Move("Right");
-            if (objects.Game.eventManager.key == "ArrowUp" && this._playerTwo._isJumping == false && this._playerTwo._isFalling == false)
-                this._playerTwo.Jump(); //JUMP
+            //JUMP
+            if (objects.Game.eventManager.key == "ArrowUp" && this._playerTwo._isJumping == false && this._playerTwo._isFalling == false) {
+                this._playerTwo.Jump();
+                createjs.Sound.play("jump");
+            }
             if (objects.Game.eventManager.key == "0") { //SHOOT
                 let bullet = this._playerTwo.Shoot();
                 if (bullet) {
+                    createjs.Sound.play("weapon_fire");
                     this.addGameObject(bullet);
                 }
             }
