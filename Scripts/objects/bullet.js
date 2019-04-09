@@ -5,8 +5,11 @@ var objects;
             super(assetID, isCentered);
             this.ownerId = ownerId;
             this.direction = direction;
+            if (direction == "left")
+                this.SetScale([-this.graphics.scaleX, this.graphics.scaleY]);
             this.hasCollisions = true;
-            this.speed = 9.81;
+            this.speed = 4;
+            this.lifetime = 600;
             this.tag = "Bullet";
             this.name = `bullet_${this.GetId()}`;
             this.onCollision = this.OnBulletCollision;
@@ -23,9 +26,16 @@ var objects;
         Update() {
             super.Update();
             this.Offset((this.direction === "right" ? 1 : -1) * this.speed, 0);
+            if (this.lifetime > 0)
+                this.lifetime -= 1;
+            else {
+                this.Destroy();
+            }
         }
         OnBulletCollision(other) {
-            this.Destroy();
+            if (other.GetId() != this.getOwner() && other.tag != "Bullet") {
+                this.Destroy();
+            }
         }
     }
     objects.Bullet = Bullet;
