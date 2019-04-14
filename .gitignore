@@ -10,4 +10,4 @@ node_modules/*/lib/*
 !node_modules/*/lib/tweenjs.min.js
 !node_modules/*/lib/soundjs.min.js
 !node_modules/*/lib/preloadjs.min.js
-!node_modules/*/jquery/jquery-3.4.0.slim.min.js
+!node_modules/jquery/jquery-3.4.0.slim.min.js
