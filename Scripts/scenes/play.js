@@ -5,6 +5,7 @@ var scenes;
         // Constructor
         constructor(width, height) {
             super(width, height);
+            this.pressedKeys = [];
             this.Start();
         }
         // Public Methods
@@ -83,36 +84,34 @@ var scenes;
             this.Main();
         }
         HandleEvents() {
-            if (!objects.Game.eventManager || !this._playerOne.isActive || !this._playerTwo.isActive)
+            if (!this._playerOne.isActive || !this._playerTwo.isActive)
                 return;
-            if (objects.Game.eventManager.key == "a") {
+            if (this.pressedKeys[65] == true)
                 this._playerOne.Move("Left");
-            }
-            else if (objects.Game.eventManager.key == "d") {
+            else if (this.pressedKeys[68] == true)
                 this._playerOne.Move("Right");
-            }
             //JUMP
-            if (objects.Game.eventManager.key == "w" && this._playerOne._isJumping == false && this._playerOne._isFalling == false) {
+            if (this.pressedKeys[87] == true && this._playerOne._isJumping == false && this._playerOne._isFalling == false) {
                 this._playerOne.Jump();
                 createjs.Sound.play("jump");
             }
-            if (objects.Game.eventManager.key == " ") { //SHOOT
+            if (this.pressedKeys[32] == true) { //SHOOT
                 let bullet = this._playerOne.Shoot();
                 if (bullet) {
                     createjs.Sound.play("weapon_fire");
                     this.addGameObject(bullet);
                 }
             }
-            if (objects.Game.eventManager.key == "ArrowLeft")
+            if (this.pressedKeys[37] == true)
                 this._playerTwo.Move("Left");
-            else if (objects.Game.eventManager.key == "ArrowRight")
+            else if (this.pressedKeys[39] == true)
                 this._playerTwo.Move("Right");
             //JUMP
-            if (objects.Game.eventManager.key == "ArrowUp" && this._playerTwo._isJumping == false && this._playerTwo._isFalling == false) {
+            if (this.pressedKeys[38] == true && this._playerTwo._isJumping == false && this._playerTwo._isFalling == false) {
                 this._playerTwo.Jump();
                 createjs.Sound.play("jump");
             }
-            if (objects.Game.eventManager.key == "0") { //SHOOT
+            if (this.pressedKeys[96] == true || this.pressedKeys[45] == true) { //SHOOT
                 let bullet = this._playerTwo.Shoot();
                 if (bullet) {
                     createjs.Sound.play("weapon_fire");
