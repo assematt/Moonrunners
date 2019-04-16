@@ -112,17 +112,29 @@
         stage.addChild(objects.Game.currentScene);
     }    
 
-    function SetEvent(ev: KeyboardEvent)
+    /* function SetEvent(ev: KeyboardEvent)
     {
-        objects.Game.eventManager = ev;
+        (objects.Game.currentScene as scenes.PlayScene).pressedKeys[ev.key] = true;
     }
-    function ResetEvent()
+    function ResetEvent(ev: KeyboardEvent)
     {
-        objects.Game.eventManager = null;
-    }
+        (objects.Game.currentScene as scenes.PlayScene).pressedKeys[ev.key] = false;
+    }  */
+
+    $(document.body).keydown(function (ev) {
+        (objects.Game.currentScene as scenes.PlayScene).pressedKeys[ev.keyCode] = true;
+        //console.log((objects.Game.currentScene as scenes.PlayScene).pressedKeys[ev.key]);
+        //console.log(ev.key);
+    });
+
+    $(document.body).keyup(function (ev) {
+        (objects.Game.currentScene as scenes.PlayScene).pressedKeys[ev.keyCode] = false;
+        //console.log((objects.Game.currentScene as scenes.PlayScene).pressedKeys[ev.key]);
+    });
+
 
     window.onload = Init;
-    window.onkeydown = SetEvent;
-    window.onkeyup = ResetEvent;
+    //window.onkeydown = SetEvent;
+    //window.onkeyup = ResetEvent;
 
 })();

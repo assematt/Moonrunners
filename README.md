@@ -23,6 +23,7 @@ The game ends when one player reaches 10 points.
 - [X] add sounds
 - [ ] Weapon system *(ammo.damage,etc.)*
 - [ ] Random weapon spawn
+- [X] All keys work at the same time using JQuery
 
 ### Team composition
 * [Matteo Assenza](https://github.com/assematt): Manager - Programmer
